@@ -6,7 +6,7 @@ $LAVA_STARTS = array(
     'A' => 94,
     'B' => 104,
     'C' => 99,
-    'D' => 87,//TODO: confirm
+    'D' => 87,
     //TODO: add E
 );
 
@@ -48,8 +48,8 @@ function estimateNextSpawn($lava_level, $lava_level_time, $last_spawn, $lowest_s
         $next_spawn = "less than an hour";
 
         $diff = $lava_level - $FLOOR_LEVEL;
-        $seconds = $diff * 120;
-        $next_spawn = strtotime("+1 minute and $seconds seconds");
+        $seconds = $diff * 120+60/* add about another minute to compensate for actual spawn delay */;
+        $next_spawn = strtotime("+$seconds seconds");
     }
     if ($lava_level <= $FLOOR_LEVEL) {
 //        $next_spawn = strtotime("+15minutes");
@@ -60,6 +60,10 @@ function estimateNextSpawn($lava_level, $lava_level_time, $last_spawn, $lowest_s
             $next_spawn = "about 5-15 minutes";
         }
     }
+
+
+    // Time between blaze and magma wave appears to be 10mins
+
 
 
     return $next_spawn;

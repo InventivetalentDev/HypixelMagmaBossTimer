@@ -81,7 +81,7 @@ if (isset($add)) {
 
             unset($stmt);
 
-            if ($v == 0||is_nan($v)) {
+            if ($v == 0 || is_nan($v)) {
                 continue;
             }
 
@@ -93,7 +93,7 @@ if (isset($add)) {
                 $lowestName = $k;
             }
 
-            $percents[$k]=$percent;
+            $percents[$k] = $percent;
         }
 
         $stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer SET lava_level=?,lava_level_time=?,lowest_stream=? WHERE id=?");
@@ -106,6 +106,20 @@ if (isset($add)) {
         echo "Lava levels added\n";
         print_r($percents);
 
+    } else if ($type === "event") {
+        $event_type = $_POST["event"];
+        if (!isset($event_type)) {
+            die("missing event type");
+        }
+
+
+        $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type) VALUES(?,?,?)");
+        $stmt->bind_param("iss", $serverId, $date, $event_type);
+        $stmt->execute();
+
+        unset($stmt);
+
+        echo "$event_type event added\n";
 
     } else if ($type === "spawn") {
 
@@ -117,7 +131,7 @@ if (isset($add)) {
 
 
         $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_spawns (rel,time) VALUES(?,?)");
-        $stmt->bind_param("is", $serverId,$date);
+        $stmt->bind_param("is", $serverId, $date);
         $stmt->execute();
 
         echo "Spawn added";
@@ -183,6 +197,31 @@ Which stream is the lowest?
       <br/>
       <button type="submit">Add it!</button>
     </form>
+    
+    <hr/>
+    
+      <form action="add.php" method="post">
+      <h2>Add Wave Event</h2>
+      
+      <label>
+      <input type="text" name="server" placeholder="miniXXY">
+      Server
+      </label>
+      <input type="hidden" name="add" value="event">
+      
+      <select name="event">
+      <option value="blaze">Blaze</option>
+      <option value="magma">Magma Cubes</option>
+      <option value="music">Music</option>
+</select>
+      
+      <br/>
+      <br/>
+      <button type="submit">Add it!</button>
+    </form>
+    
+    <br/>
+    
     
     <hr/>
     

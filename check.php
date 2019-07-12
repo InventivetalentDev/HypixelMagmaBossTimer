@@ -1,6 +1,10 @@
 <?php
 
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include_once "common.php";
 
 include "db_stuff.php";
@@ -19,6 +23,10 @@ $last_spawn = "";//TODO: should probably get the latest times from the separate 
 $lava_level = 0;
 $lava_level_time = "";
 $spawn_times = array();
+$events=array(
+        "blaze"=>[],
+    "magma"=>[]
+);
 $lava_levels = array(
     "A"=>[],
     "B"=>[],
@@ -53,6 +61,27 @@ if (isset($id)) {
 
     unset($stmt);
 
+
+    $stmt = $conn->prepare("SELECT id,rel,time,type FROM hypixel_skyblock_magma_timer_events WHERE rel=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+
+    $stmt->bind_result($eId, $rel, $event_time,$eventType);
+    while ($row = $stmt->fetch()) {
+        $event_timestamp = strtotime($event_time);
+
+        if (!isset($events[$eventType])) {
+            $events[$eventType] = [];
+        }
+
+        $events[$eventType][] =             $event_timestamp;
+
+    }
+
+
+    unset($stmt);
+
+
     $lId = 0;
     $rel = 0;
     $lava_time = "";
@@ -83,6 +112,30 @@ if (isset($id)) {
         echo "\"data\":".json_encode($v)."},";
     }
     echo "];</script>";
+
+
+    echo "<script>window.events = ";
+    echo "{\"name\":\"Events\",";
+    echo "\"type\":\"flags\",";
+    echo "\"data\":[";
+    foreach($events as $k=>$v){
+        foreach ($v as $s) {
+            $s1=$s*1000;
+            $name = "?";
+            if ($k == "blaze") {
+                $name="Blaze Wave";
+            }
+            if ($k == "magma") {
+                $name = "Magma Cube Wave";
+            }
+            if ($k == "music") {
+                $name = "Music";
+            }
+            echo "{\"x\":$s1,title:\"$name\"},";
+        }
+    }
+    echo "]}";
+    echo ";</script>";
 
 
     echo "<script>window.spawns = ";
@@ -134,7 +187,10 @@ $conn->close();
 <script>
 $(document).ready(function () {
 
-    window.series.push(window.spawns)
+    window.series.push(window.spawns);
+    window.series.push(window.events);
+
+    console.log(window.series);
 
     Highcharts.chart('container', {
         chart: {
