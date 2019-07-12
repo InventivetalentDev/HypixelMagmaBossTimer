@@ -16,29 +16,27 @@ if (!isset($server) || empty($server)) {
 }
 
 
-
-
 $id = 0;
 $last_spawn = "";//TODO: should probably get the latest times from the separate table
 $lava_level = 0;
 $lava_level_time = "";
 $spawn_times = array();
-$events=array(
-        "blaze"=>[],
-    "magma"=>[]
+$events = array(
+    "blaze" => [],
+    "magma" => []
 );
 $lava_levels = array(
-    "A"=>[],
-    "B"=>[],
-    "C"=>[],
-    "D"=>[],
-    "E"=>[]
+    "A" => [],
+    "B" => [],
+    "C" => [],
+    "D" => [],
+    "E" => []
 );
 
-$stmt = $conn->prepare("SELECT id,server,last_spawn,lava_level,lava_level_time FROM hypixel_skyblock_magma_timer WHERE server=?");
+$stmt = $conn->prepare("SELECT id,server,last_spawn,lava_level,lava_level_time,lowest_stream,last_event,last_event_time FROM hypixel_skyblock_magma_timer WHERE server=?");
 $stmt->bind_param("s", $server);
 $stmt->execute();
-$stmt->bind_result($id, $server, $last_spawn, $lava_level, $lava_level_time);
+$stmt->bind_result($id, $server, $last_spawn, $lava_level, $lava_level_time, $lowest_stream, $last_event, $last_event_time);
 $stmt->fetch();
 
 if (isset($id)) {
@@ -66,7 +64,7 @@ if (isset($id)) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
-    $stmt->bind_result($eId, $rel, $event_time,$eventType);
+    $stmt->bind_result($eId, $rel, $event_time, $eventType);
     while ($row = $stmt->fetch()) {
         $event_timestamp = strtotime($event_time);
 
@@ -74,7 +72,7 @@ if (isset($id)) {
             $events[$eventType] = [];
         }
 
-        $events[$eventType][] =             $event_timestamp;
+        $events[$eventType][] = $event_timestamp;
 
     }
 
@@ -91,7 +89,7 @@ if (isset($id)) {
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
-    $stmt->bind_result($lId, $rel,$level, $lava_time,$stream);
+    $stmt->bind_result($lId, $rel, $level, $lava_time, $stream);
     while ($row = $stmt->fetch()) {
         $lava_level_timestamp = strtotime($lava_time);
 
@@ -100,7 +98,7 @@ if (isset($id)) {
         }
 
         $lava_levels[$stream][] = array(
-            $lava_level_timestamp*1000,
+            $lava_level_timestamp * 1000,
             $level
         );
     }
@@ -109,7 +107,7 @@ if (isset($id)) {
     echo "<script>window.series = [";
     foreach ($lava_levels as $k => $v) {
         echo "{\"name\":\"$k\",";
-        echo "\"data\":".json_encode($v)."},";
+        echo "\"data\":" . json_encode($v) . "},";
     }
     echo "];</script>";
 
@@ -118,12 +116,12 @@ if (isset($id)) {
     echo "{\"name\":\"Events\",";
     echo "\"type\":\"flags\",";
     echo "\"data\":[";
-    foreach($events as $k=>$v){
+    foreach ($events as $k => $v) {
         foreach ($v as $s) {
-            $s1=$s*1000;
+            $s1 = $s * 1000;
             $name = "?";
             if ($k == "blaze") {
-                $name="Blaze Wave";
+                $name = "Blaze Wave";
             }
             if ($k == "magma") {
                 $name = "Magma Cube Wave";
@@ -139,16 +137,16 @@ if (isset($id)) {
 
 
     echo "<script>window.spawns = ";
-        echo "{\"name\":\"Spawns\",";
-        echo "\"type\":\"flags\",";
-        echo "\"data\":[";
-        foreach($spawn_times as $s){
-            $s1=$s*1000;
-            echo "{\"x\":$s1,title:\"Spawn\"},";
-        }
-        echo "]}";
+    echo "{\"name\":\"Spawns\",";
+    echo "\"type\":\"flags\",";
+    echo "\"data\":[";
+    foreach ($spawn_times as $s) {
+        $s1 = $s * 1000;
+        echo "{\"x\":$s1,title:\"Spawn\"},";
+    }
+    echo "]}";
     echo ";</script>";
-}else{
+} else {
     echo "Unknown Server";
 }
 
@@ -162,12 +160,24 @@ echo "LastSpawn: $last_spawn\n";
 echo "Spawns: \n";
 var_dump($spawn_times);
 
-echo "\nLavaLevel: $lava_level at $lava_level_time\n";
+echo "\nLastEvent: $last_event\n";
+echo "$last_event_time\n";
+
+echo "\nLavaLevel: $lava_level\n";
+echo "$lava_level_time\n";
 //echo "Levels: \n";
 //var_dump($lava_levels);
 
 
 echo "</pre>";
+
+$lava_level_timestamp = strtotime($lava_level_time);
+$last_spawn_timestamp = strtotime($last_spawn);
+$last_event_timestamp = strtotime($last_event_time);
+
+
+$estimatedSpawn = estimateNextSpawn($lava_level, $lava_level_timestamp, $last_spawn, $lowest_stream, $last_event, $last_event_timestamp);
+echo "<h1>Estimated Spawn: <span " . (is_numeric($estimatedSpawn) ? ("data-time='$estimatedSpawn'") : ("")) . ">$estimatedSpawn</span></h1>";
 
 echo '<div id="container"></div>';
 
@@ -178,53 +188,66 @@ $conn->close();
 ?>
 
 
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
 <!--<script src="https://code.highcharts.com/highcharts.js"></script>-->
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="timeFormatter.js"></script>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
 
-    window.series.push(window.spawns);
-    window.series.push(window.events);
+        window.series.push(window.spawns);
+        window.series.push(window.events);
 
-    console.log(window.series);
+        console.log(window.series);
 
-    Highcharts.chart('container', {
-        chart: {
-            type: 'spline'
-        },
-        title: {
-            text: 'Lava Levels'
-        },
-        xAxis: {
-            type: 'datetime',
-            title: {
-                text: 'Time'
-            }
-        },
-        yAxis: {
-            title: {
-                text: 'Level'
+
+        Highcharts.chart('container', {
+            chart: {
+                type: 'spline'
             },
-            min: 80
-        },
-        plotOptions: {
-            spline: {
-                marker: {
-                    enabled: true
+            title: {
+                text: 'Timeline'
+            },
+            xAxis: {
+                type: 'datetime',
+                title: {
+                    text: 'Time'
                 }
-            }
-        },
+            },
+            yAxis: {
+                title: {
+                    text: 'Level'
+                },
+                min: 80
+            },
+            plotOptions: {
+                spline: {
+                    marker: {
+                        enabled: true
+                    }
+                }
+            },
 
 
-        // Define the data points. All series have a dummy year
-        // of 1970/71 in order to be compared on the same x axis. Note
-        // that in JavaScript, months start at 0 for January, 1 for February etc.
-        series: window.series
-    });
+            // Define the data points. All series have a dummy year
+            // of 1970/71 in order to be compared on the same x axis. Note
+            // that in JavaScript, months start at 0 for January, 1 for February etc.
+            series: window.series
+        });
 
-})
+
+        function refreshTimes() {
+            $("span[data-time]").each(function () {
+                let $this = $(this);
+                formatTime($this);
+            })
+        }
+
+        refreshTimes();
+        setInterval(refreshTimes, 30000);
+
+
+    })
 </script>

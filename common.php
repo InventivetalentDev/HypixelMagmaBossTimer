@@ -11,9 +11,9 @@ $LAVA_STARTS = array(
 );
 
 $LAVA_SPEED = array(// seconds for lava to advance one level (average) TODO
-    'A' => 100,
-    'B' => 100,
-    'C' => 100,
+    'A' => 600,
+    'B' => 180,
+    'C' => 600,
     'D' => 100,
     'E' => 100
 );

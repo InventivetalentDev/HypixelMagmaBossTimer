@@ -110,6 +110,7 @@ echo "</table>";
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+<script src="timeFormatter.js"></script>
 <script>
     $(document).ready(function () {
 
@@ -117,24 +118,7 @@ echo "</table>";
         function refreshTimes() {
             $("td[data-time]").each(function () {
                 let $this = $(this);
-                let timeString = $this.text();
-                let timestamp = $this.data("time");
-                if (timestamp == null || timestamp === 0 || timestamp.length === 0) {
-                    return;
-                }
-                let parsed = moment.unix(timestamp);
-
-                if ($this.hasClass("lava_level_time")) {
-                    if(Math.abs(parsed.diff(moment()))>7.2e+6/*2h*/)
-                    $this.parent().addClass("unreliable");
-                }
-
-                let formatted = parsed.format('lll');
-
-                let fromNow = parsed.fromNow();
-                let toNow = parsed.toNow();
-
-                $this.text(fromNow + "  (" + formatted + ")");
+                formatTime($this);
             })
         }
 

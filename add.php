@@ -148,6 +148,7 @@ if (isset($add)) {
     $conn->close();
 
     echo "</pre>";
+    echo "<a href='check.php?server=$server'>Go to Server</a>";
     echo "<hr/>";
 }
 
