@@ -121,19 +121,23 @@ if (isset($id)) {
         foreach ($v as $s) {
             $s1 = $s * 1000;
             $name = "?";
+            $text = "";
             if ($k == "blaze") {
                 $name = "Blaze Wave";
+                $text = "The Blaze Wave Spawned, Magma wave should be coming up ~10mins from here and spawn will happen in about 20mins";
             }
             if ($k == "magma") {
                 $name = "Magma Cube Wave";
+                $text = "The Blaze Wave Spawned, Spawn should happen in about 10mins from here";
             }
             if ($k == "music") {
                 $name = "Music";
             }
             if ($k === "reboot") {
-                $name="Server Reboot";
+                $name = "Server Reboot";
+                $text = "This server rebootet, which likely means the data here is no longer valid.";
             }
-            echo "{\"x\":$s1,title:\"$name\"},";
+            echo "{\"x\":$s1,title:\"$name\",text:\"$text\"},";
         }
     }
     echo "]}";
