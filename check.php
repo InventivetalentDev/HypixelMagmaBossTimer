@@ -15,6 +15,7 @@ if (!isset($server) || empty($server)) {
     die("missing server");
 }
 
+echo "$server |";
 
 $id = 0;
 $last_spawn = "";//TODO: should probably get the latest times from the separate table
@@ -128,6 +129,9 @@ if (isset($id)) {
             }
             if ($k == "music") {
                 $name = "Music";
+            }
+            if ($k === "reboot") {
+                $name="Server Reboot";
             }
             echo "{\"x\":$s1,title:\"$name\"},";
         }

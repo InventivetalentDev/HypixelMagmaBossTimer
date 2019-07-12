@@ -15,6 +15,8 @@
     The list below shows all currently tracked servers with levels of the lava indicators, events, spawns and estimates. Click the name of a server to get more details.<br/>
     Use the link below the list to add data.<br/>
     <br/>
+    Unfortunately, this does not work continuously as the server codes change after reboots, but it does help to keep track of current spawn cycles.<br/>
+    <br/>
     Please don't abuse this and tweet me <a href="https://twitter.com/Inventivtalent">@Inventivtalent</a> if you have suggestions or issues. <br/>
     Enjoy! :)
 </p>

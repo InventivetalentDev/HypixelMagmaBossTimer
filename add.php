@@ -220,6 +220,7 @@ Which stream is the lowest?
       <option value="blaze">Blaze</option>
       <option value="magma">Magma Cubes</option>
       <option value="music">Music</option>
+      <option value="reboot">Server Reboot</option>
 </select>
       
       <br/>
