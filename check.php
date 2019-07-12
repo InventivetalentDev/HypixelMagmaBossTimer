@@ -1,9 +1,9 @@
 <?php
 
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 include_once "common.php";
 
@@ -48,7 +48,7 @@ if (isset($id)) {
     $rel = 0;
     $spawn_time = "";
 
-    $stmt = $conn->prepare("SELECT id,rel,time FROM hypixel_skyblock_magma_timer_spawns WHERE rel=?");
+    $stmt = $conn->prepare("SELECT id,rel,time FROM hypixel_skyblock_magma_timer_spawns WHERE rel=? ORDER BY time ASC");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
@@ -62,7 +62,7 @@ if (isset($id)) {
     unset($stmt);
 
 
-    $stmt = $conn->prepare("SELECT id,rel,time,type FROM hypixel_skyblock_magma_timer_events WHERE rel=?");
+    $stmt = $conn->prepare("SELECT id,rel,time,type FROM hypixel_skyblock_magma_timer_events WHERE rel=? ORDER BY time ASC");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 
@@ -87,7 +87,7 @@ if (isset($id)) {
     $lava_time = "";
     $level = 0;
 
-    $stmt = $conn->prepare("SELECT id,rel,level,time,stream FROM hypixel_skyblock_magma_timer_lava WHERE rel=?");
+    $stmt = $conn->prepare("SELECT id,rel,level,time,stream FROM hypixel_skyblock_magma_timer_lava WHERE rel=? ORDER BY time ASC");
     $stmt->bind_param("i", $id);
     $stmt->execute();
 

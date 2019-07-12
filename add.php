@@ -113,6 +113,12 @@ if (isset($add)) {
         }
 
 
+        $stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer SET last_event=?,last_event_time=? WHERE id=?");
+        $stmt->bind_param("ssi", $event_type,$date, $serverId);
+        $stmt->execute();
+
+        unset($stmt);
+
         $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type) VALUES(?,?,?)");
         $stmt->bind_param("iss", $serverId, $date, $event_type);
         $stmt->execute();
