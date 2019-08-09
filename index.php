@@ -67,19 +67,19 @@
                 <br/>
 
                 <div class="row center-align">
-                    <button class="btn center-align track-btn amber" id="waveBlazeBtn">
+                    <button disabled class="btn center-align track-btn amber" id="waveBlazeBtn">
                         Blaze Wave Spawned
                     </button>
                     <br/>
-                    <button class="btn center-align track-btn deep-orange" id="waveMagmaBtn">
+                    <button disabled class="btn center-align track-btn deep-orange" id="waveMagmaBtn">
                         Magma Wave Spawned
                     </button>
                     <br/>
-                    <button class="btn center-align track-btn purple darken-3" id="musicBtn">
+                    <button disabled class="btn center-align track-btn purple darken-3" id="musicBtn">
                         Mysterious Music Playing
                     </button>
                     <br/>
-                    <button class="btn center-align track-btn red darken-4" id="spawnedBtn">
+                    <button disabled class="btn center-align track-btn red darken-4" id="spawnedBtn">
                         Magma Boss Spawned
                     </button>
                 </div>
@@ -101,6 +101,8 @@
                     grecaptcha.execute('6LehTrIUAAAAAJOVyw92PrxY0_g80eXmIEJdTk3d', {action: 'homepage'}).then(function (token) {
                         console.log("got recaptcha token");
                         reCaptchaToken = token;
+
+                        $(".track-btn").attr("disabled", false);
                     });
                 });
 
