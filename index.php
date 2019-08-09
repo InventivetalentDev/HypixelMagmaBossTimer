@@ -104,6 +104,7 @@
 
                 let estimateData = {};
 
+                let timerId = -1;
                 function updateTimer() {
                     now = Date.now();
 
@@ -116,27 +117,29 @@
                     $('head title', window.parent.document).text(formattedTimer+" | Hypixel Skyblock Magma Boss Timer");
                 }
 
-                $.ajax("get_estimated_spawn.php").done(function (data) {
-                    console.log(data);
-                    estimateData = data;
+                function refreshEstimate() {
+                    $.ajax("get_estimated_spawn.php").done(function (data) {
+                        console.log(data);
+                        estimateData = data;
 
 
-                    if (now - data.latest.blaze < twentyMinsInMillis) {
-                        $("#waveBlazeBtn").text($("#waveBlazeBtn").text() + " (" + moment(data.latest.blaze).fromNow() + ")");
-                    }
-                    if (now - data.latest.magma < tenMinsInMillis) {
-                        $("#waveMagmaBtn").text($("#waveMagmaBtn").text() + " (" + moment(data.latest.magma).fromNow() + ")");
-                    }
-                    if (now - data.latest.music < fiveMinsInMillis) {
-                        $("#musicBtn").text($("#musicBtn").text() + " (" + moment(data.latest.music).fromNow() + ")");
-                    }
+                        if (now - data.latest.blaze < twentyMinsInMillis) {
+                            $("#waveBlazeBtn").text($("#waveBlazeBtn").text() + " (" + moment(data.latest.blaze).fromNow() + ")");
+                        }
+                        if (now - data.latest.magma < tenMinsInMillis) {
+                            $("#waveMagmaBtn").text($("#waveMagmaBtn").text() + " (" + moment(data.latest.magma).fromNow() + ")");
+                        }
+                        if (now - data.latest.music < fiveMinsInMillis) {
+                            $("#musicBtn").text($("#musicBtn").text() + " (" + moment(data.latest.music).fromNow() + ")");
+                        }
 
+                        updateTimer();
+                        clearInterval(timerId);
+                        timerId = setInterval(updateTimer, 1000);
+                    });
+                }
 
-
-
-                    updateTimer();
-                    setInterval(updateTimer, 1000);
-                });
+                refreshEstimate();
 
 
                 $("#waveBlazeBtn").click(function () {
@@ -147,6 +150,8 @@
                         data: {type: "blaze"}
                     }).done(function () {
                         $(this).css("display", "none");
+
+                        refreshEstimate();
                     })
                 });
 
@@ -158,6 +163,8 @@
                         data: {type: "magma"}
                     }).done(function () {
                         $(this).css("display", "none");
+
+                        refreshEstimate();
                     })
                 });
 
@@ -169,6 +176,8 @@
                         data: {type: "music"}
                     }).done(function () {
                         $(this).css("display", "none");
+
+                        refreshEstimate();
                     })
                 });
 
@@ -180,6 +189,8 @@
                         data: {}
                     }).done(function () {
                         $(this).css("display", "none");
+
+                        refreshEstimate();
                     })
                 });
 
