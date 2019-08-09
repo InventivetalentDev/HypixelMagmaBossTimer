@@ -68,15 +68,15 @@
 
                 <div class="row center-align">
                     <button disabled class="btn center-align track-btn amber" id="waveBlazeBtn">
-                        Blaze Wave Spawned
+                        Blaze Wave Spawned <span id="waveBlazeTime"></span>
                     </button>
                     <br/>
                     <button disabled class="btn center-align track-btn deep-orange" id="waveMagmaBtn">
-                        Magma Wave Spawned
+                        Magma Wave Spawned <span id="waveMagmaTime"></span>
                     </button>
                     <br/>
                     <button disabled class="btn center-align track-btn purple darken-3" id="musicBtn">
-                        Mysterious Music Playing
+                        Mysterious Music Playing <span id="musicTime"></span>
                     </button>
                     <br/>
                     <button disabled class="btn center-align track-btn red darken-4" id="spawnedBtn">
@@ -129,6 +129,22 @@
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
                     $("#time").text(formattedTimer);
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
+
+                    if (now - estimateData.latest.blaze < twentyMinsInMillis) {
+                        $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
+                    }else{
+                        $("#waveBlazeTime").text("");
+                    }
+                    if (now - estimateData.latest.magma < tenMinsInMillis) {
+                        $("#waveMagmaTime").text( "(" + moment(estimateData.latest.magma).fromNow() + ")");
+                    }else{
+                        $("#waveMagmaTime").text("");
+                    }
+                    if (now - estimateData.latest.music < fiveMinsInMillis) {
+                        $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
+                    }else{
+                        $("#musicTime").text("");
+                    }
                 }
 
                 function refreshEstimate() {
@@ -137,15 +153,6 @@
                         estimateData = data;
 
 
-                        if (now - data.latest.blaze < twentyMinsInMillis) {
-                            $("#waveBlazeBtn").text($("#waveBlazeBtn").text() + " (" + moment(data.latest.blaze).fromNow() + ")");
-                        }
-                        if (now - data.latest.magma < tenMinsInMillis) {
-                            $("#waveMagmaBtn").text($("#waveMagmaBtn").text() + " (" + moment(data.latest.magma).fromNow() + ")");
-                        }
-                        if (now - data.latest.music < fiveMinsInMillis) {
-                            $("#musicBtn").text($("#musicBtn").text() + " (" + moment(data.latest.music).fromNow() + ")");
-                        }
 
                         updateTimer();
                         clearInterval(timerId);
