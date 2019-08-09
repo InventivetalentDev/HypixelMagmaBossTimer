@@ -54,18 +54,18 @@ $lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
 $lastMusicEvent = array_values($event_times["music"])[0];// ~5mins
 
 
-if ($lastBlazeEvent>$lastSpawn &&$now - $lastBlazeEvent < $twentyMinsInMillis) {
-    $estimate = $lastBlazeEvent+$twentyMinsInMillis;
+if ($lastBlazeEvent > $lastSpawn && $now - $lastBlazeEvent < $twentyMinsInMillis) {
+    $estimate = $lastBlazeEvent + $twentyMinsInMillis;
     $estimateFromBlaze = $estimate;
     $estimateSource = "blaze";
 }
-if ($lastMagmaEvent>$lastSpawn &&$now - $lastMagmaEvent < $tenMinsInMillis) {
-    $estimate = $lastMagmaEvent+$tenMinsInMillis;
+if ($lastMagmaEvent > $lastSpawn && $now - $lastMagmaEvent < $tenMinsInMillis) {
+    $estimate = $lastMagmaEvent + $tenMinsInMillis;
     $estimateFromMagma = $estimate;
     $estimateSource = "magma";
 }
-if ($lastMusicEvent>$lastSpawn &&$now - $lastMusicEvent < $fiveMinsInMillis) {
-    $estimate = $lastMusicEvent+$fiveMinsInMillis;
+if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $fiveMinsInMillis) {
+    $estimate = $lastMusicEvent + $fiveMinsInMillis;
     $estimateFromMusic = $estimate;
     $estimateSource = "music";
 }
@@ -78,12 +78,12 @@ echo json_encode(array(
     "eventTimes" => $event_times,
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $estimate,
-    "estimateSource"=>$estimateSource,
-    "estimates"=>array(
-        "fromSpawn"=>$estimateFromSpawn,
-        "fromBlaze"=>$estimateFromBlaze,
-        "fromMagma"=>$estimateFromMagma,
-        "fromMusic"=>$estimateFromMusic
+    "estimateSource" => $estimateSource,
+    "estimates" => array(
+        "fromSpawn" => $estimateFromSpawn,
+        "fromBlaze" => $estimateFromBlaze,
+        "fromMagma" => $estimateFromMagma,
+        "fromMusic" => $estimateFromMusic
     ),
     "latest" => array(
         "spawn" => $lastSpawn,

@@ -91,8 +91,19 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
+        <script src="https://www.google.com/recaptcha/api.js?render=6LehTrIUAAAAAJOVyw92PrxY0_g80eXmIEJdTk3d"></script>
         <script>
             $(document).ready(function () {
+
+                let reCaptchaToken = null;
+                grecaptcha.ready(function () {
+                    console.log("recaptcha ready");
+                    grecaptcha.execute('6LehTrIUAAAAAJOVyw92PrxY0_g80eXmIEJdTk3d', {action: 'homepage'}).then(function (token) {
+                        console.log("got recaptcha token");
+                        reCaptchaToken = token;
+                    });
+                });
+
                 let bgIndex = getRndInteger(1, 10);
                 $("#bgImage").css("background-image", "url(img/bg/" + bgIndex + ".jpg), url(img/bg/" + bgIndex + ".png)");
 
@@ -105,6 +116,7 @@
                 let estimateData = {};
 
                 let timerId = -1;
+
                 function updateTimer() {
                     now = Date.now();
 
@@ -114,7 +126,7 @@
                     let duration = estimateData.estimate - now;
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
                     $("#time").text(formattedTimer);
-                    $('head title', window.parent.document).text(formattedTimer+" | Hypixel Skyblock Magma Boss Timer");
+                    $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
                 }
 
                 function refreshEstimate() {
@@ -147,7 +159,7 @@
                     $.ajax({
                         method: "POST",
                         url: "add_event.php",
-                        data: {type: "blaze"}
+                        data: {type: "blaze",captcha:reCaptchaToken}
                     }).done(function () {
                         $(this).css("display", "none");
 
@@ -160,7 +172,7 @@
                     $.ajax({
                         method: "POST",
                         url: "add_event.php",
-                        data: {type: "magma"}
+                        data: {type: "magma",captcha:reCaptchaToken}
                     }).done(function () {
                         $(this).css("display", "none");
 
@@ -173,7 +185,7 @@
                     $.ajax({
                         method: "POST",
                         url: "add_event.php",
-                        data: {type: "music"}
+                        data: {type: "music",captcha:reCaptchaToken}
                     }).done(function () {
                         $(this).css("display", "none");
 
@@ -186,11 +198,11 @@
                     $.ajax({
                         method: "POST",
                         url: "add_spawn.php",
-                        data: {}
+                        data: {captcha:reCaptchaToken}
                     }).done(function () {
                         $(this).css("display", "none");
 
-                        refreshEstimate();
+                        // refreshEstimate();
                     })
                 });
 
