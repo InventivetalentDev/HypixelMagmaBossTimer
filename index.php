@@ -180,11 +180,12 @@
 
                         updateTimer();
                         clearInterval(timerId);
-                        timerId = setInterval(updateTimer, 1000);
+                        timerId = setInterval(updateTimer, 1000);// tick every second
                     });
                 }
 
                 refreshEstimate();
+                setInterval(refreshEstimate, 60000);// update estimate every minute
 
 
                 $("#waveBlazeBtn").click(function () {
@@ -261,7 +262,7 @@
                             })
                         }
                     })
-                })
+                });
 
 
                 function confirmAndCaptchaAdd(type, cb) {
