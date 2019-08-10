@@ -35,7 +35,7 @@ if ($res = checkCaptcha($_POST["captcha"])) {
     $stmt->bind_result($lastTime);
     if ($stmt->fetch()) {
         $lastTime = strtotime($lastTime);
-        if (time() - $lastTime < 1800) {
+        if (time() - $lastTime < 3600) {
             die("nope. too soon.");
         }
     }
