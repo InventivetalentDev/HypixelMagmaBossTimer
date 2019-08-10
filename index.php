@@ -45,7 +45,7 @@
             }
 
 
-            #btnOverlay{
+            #btnOverlay {
                 position: fixed;
                 top: 5px;
                 right: 5px;
@@ -104,7 +104,7 @@
 
         </div>
 
-      <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
+        <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -192,6 +192,16 @@
 
                 refreshEstimate();
                 setInterval(refreshEstimate, 60000);// update estimate every minute
+
+                function ping() {
+                    $.ajax({
+                        method: "POST",
+                        url: "ping.php"
+                    })
+                }
+
+                ping();
+                setInterval(ping, 30000);
 
 
                 $("#waveBlazeBtn").click(function () {
