@@ -20,12 +20,25 @@ if (!isset($_POST["captcha"])) {
     die("missing captcha");
 }
 
+//die("*sigh* I said don't abuse plz :(");
+
 $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
 include_once "common.php";
 
 if ($res = checkCaptcha($_POST["captcha"])) {
     include_once "db_stuff.php";
+
+    $stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_events WHERE type=? AND ip=?");
+    $stmt->bind_param("ss", $type,$ip);
+    $stmt->execute();
+    $stmt->bind_result($lastTime);
+    if ($stmt->fetch()) {
+        $lastTime = strtotime($lastTime);
+        if (time() - $lastTime < 1800) {
+            die("nope. too soon.");
+        }
+    }
 
     $date = date("Y-m-d H:i:s");
     $rel = -1;
