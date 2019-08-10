@@ -39,6 +39,8 @@ if ($res = checkCaptcha($_POST["captcha"])) {
             die("nope. too soon.");
         }
     }
+    $stmt->close();
+    unset($stmt);
 
     $date = date("Y-m-d H:i:s");
     $rel = -1;
@@ -46,6 +48,7 @@ if ($res = checkCaptcha($_POST["captcha"])) {
     $stmt->bind_param("isss", $rel, $date, $type,$ip);
     $stmt->execute();
     $stmt->close();
+    unset($stmt);
 
     echo "added";
 }else{
