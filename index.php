@@ -11,8 +11,10 @@
                 overflow: hidden;
             }
 
-            body {
+            body,.modal-content{
                 background-color: rgb(55, 40, 47);
+            }
+            body {
                 color: #e9e9e9;
             }
 
@@ -114,6 +116,8 @@
                     The timer will update accordingly and display the estimated spawn time, based on the known delays between events.<br/>
                     <br/>
                     This is meant to help everyone. Please don't abuse it by submitting false information. Thanks! :)<br/>
+                    <br/>
+                    There are currently <strong><span id="activeUserCount">0</span> users waiting </strong>
 
                 </p>
             </div>
@@ -203,11 +207,25 @@
                         clearInterval(timerId);
                         timerId = setInterval(updateTimer, 1000);// tick every second
                     });
+
+                    $.ajax("get_active_users.php").done(function (data) {
+                        $("#activeUserCount").text(data);
+                    })
                 }
 
                 refreshEstimate();
                 setInterval(refreshEstimate, 60000);// update estimate every minute
 
+
+                function ping() {
+                    $.ajax({
+                        method: "POST",
+                        url: "ping.php"
+                    })
+                }
+
+                ping();
+                setInterval(ping, 30000);
 
                 $("#waveBlazeBtn").click(function () {
                     let $this = $(this);
@@ -275,6 +293,19 @@
                                 method: "POST",
                                 url: "add_spawn.php",
                                 data: {captcha: reCaptchaToken}
+                            }).done(function () {
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
+
+                                // refreshEstimate();
+                            });
+                            //TODO: remove add_spawn call
+
+
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "spawn", captcha: reCaptchaToken}
                             }).done(function () {
                                 // $this.css("display", "none");
                                 $this.attr("disabled", true);
