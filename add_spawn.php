@@ -1,5 +1,9 @@
 <?php
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
+
 if ($_SERVER['REQUEST_METHOD'] !== "POST") {
     die();
 }
@@ -27,6 +31,8 @@ if ($res = checkCaptcha($_POST["captcha"])) {
             die("nope. too soon.");
         }
     }
+    $stmt->close();
+    unset($stmt);
 
     $date = date("Y-m-d H:i:s");
     $rel = -1;
@@ -34,6 +40,7 @@ if ($res = checkCaptcha($_POST["captcha"])) {
     $stmt->bind_param("iss", $rel, $date, $ip);
     $stmt->execute();
     $stmt->close();
+    unset($stmt);
 
     echo "added";
 } else {
