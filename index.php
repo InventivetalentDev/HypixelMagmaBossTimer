@@ -98,12 +98,8 @@
                 let reCaptchaToken = null;
                 grecaptcha.ready(function () {
                     console.log("recaptcha ready");
-                    grecaptcha.execute('6LehTrIUAAAAAJOVyw92PrxY0_g80eXmIEJdTk3d', {action: 'homepage'}).then(function (token) {
-                        console.log("got recaptcha token");
-                        reCaptchaToken = token;
 
-                        $(".track-btn").attr("disabled", false);
-                    });
+                    $(".track-btn").attr("disabled", false);
                 });
 
                 let bgIndex = getRndInteger(1, 10);
@@ -111,6 +107,7 @@
 
                 let now = new Date().getTime();
                 let twoHoursInMillis = 7.2e+6;
+                let oneAndHalfHourInMillis = 5.4e+6;
                 let twentyMinsInMillis = 1.2e+6;
                 let tenMinsInMillis = 600000;
                 let fiveMinsInMillis = 300000;
@@ -132,17 +129,17 @@
 
                     if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                         $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
-                    }else{
+                    } else {
                         $("#waveBlazeTime").text("");
                     }
                     if (now - estimateData.latest.magma < tenMinsInMillis) {
-                        $("#waveMagmaTime").text( "(" + moment(estimateData.latest.magma).fromNow() + ")");
-                    }else{
+                        $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
+                    } else {
                         $("#waveMagmaTime").text("");
                     }
                     if (now - estimateData.latest.music < fiveMinsInMillis) {
                         $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
-                    }else{
+                    } else {
                         $("#musicTime").text("");
                     }
                 }
@@ -151,7 +148,6 @@
                     $.ajax("get_estimated_spawn.php").done(function (data) {
                         console.log(data);
                         estimateData = data;
-
 
 
                         updateTimer();
@@ -164,56 +160,97 @@
 
 
                 $("#waveBlazeBtn").click(function () {
-                    $(this).attr("disabled", true);
-                    $.ajax({
-                        method: "POST",
-                        url: "add_event.php",
-                        data: {type: "blaze",captcha:reCaptchaToken}
-                    }).done(function () {
-                        $(this).css("display", "none");
+                    let $this = $(this);
+                    confirmAndCaptchaAdd("a blaze wave", function (b) {
+                        if (b) {
+                            $this.attr("disabled", true);
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "blaze", captcha: reCaptchaToken}
+                            }).done(function () {
+                                $this.css("display", "none");
 
-                        refreshEstimate();
+                                refreshEstimate()
+                            })
+                        }
                     })
                 });
 
                 $("#waveMagmaBtn").click(function () {
-                    $(this).attr("disabled", true);
-                    $.ajax({
-                        method: "POST",
-                        url: "add_event.php",
-                        data: {type: "magma",captcha:reCaptchaToken}
-                    }).done(function () {
-                        $(this).css("display", "none");
+                    let $this = $(this);
+                    confirmAndCaptchaAdd("a magma wave", function (b) {
+                        if (b) {
+                            $this.attr("disabled", true);
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "magma", captcha: reCaptchaToken}
+                            }).done(function () {
+                                $this.css("display", "none");
 
-                        refreshEstimate();
+                                refreshEstimate();
+                            })
+                        }
                     })
                 });
 
                 $("#musicBtn").click(function () {
-                    $(this).attr("disabled", true);
-                    $.ajax({
-                        method: "POST",
-                        url: "add_event.php",
-                        data: {type: "music",captcha:reCaptchaToken}
-                    }).done(function () {
-                        $(this).css("display", "none");
+                    let $this = $(this);
+                    confirmAndCaptchaAdd("music", function (b) {
+                        if (b) {
+                            $this.attr("disabled", true);
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "music", captcha: reCaptchaToken}
+                            }).done(function () {
+                                $this.css("display", "none");
 
-                        refreshEstimate();
+                                refreshEstimate();
+                            })
+                        }
                     })
                 });
 
                 $("#spawnedBtn").click(function () {
-                    $(this).attr("disabled", true);
-                    $.ajax({
-                        method: "POST",
-                        url: "add_spawn.php",
-                        data: {captcha:reCaptchaToken}
-                    }).done(function () {
-                        $(this).css("display", "none");
+                    let $this = $(this);
+                    confirmAndCaptchaAdd("a boss spawn", function (b) {
+                        if (b) {
+                            $this.attr("disabled", true);
+                            $.ajax({
+                                method: "POST",
+                                url: "add_spawn.php",
+                                data: {captcha: reCaptchaToken}
+                            }).done(function () {
+                                $this.css("display", "none");
 
-                        // refreshEstimate();
+                                // refreshEstimate();
+                            })
+                        }
                     })
-                });
+                })
+
+
+                function confirmAndCaptchaAdd(type, cb) {
+                    function checkCaptcha() {
+                        grecaptcha.execute('6LehTrIUAAAAAJOVyw92PrxY0_g80eXmIEJdTk3d', {action: (type||"homepage").replace(/ /gi,"_")}).then(function (token) {
+                            console.log("got recaptcha token");
+                            reCaptchaToken = token;
+
+                            cb(true);
+                        });
+                        return true;
+                    }
+
+                    if (estimateData.estimate - now > 5.4e+6) {
+                        if (confirm("The next estimated spawn phase has not yet started. Are you sure you want add " + (type || "a spawn") + "?") == true) {
+                            return checkCaptcha();
+                        }
+                        return false;
+                    }
+                    return checkCaptcha()
+                }
 
                 function getRndInteger(min, max) {
                     return Math.floor(Math.random() * (max - min)) + min;
