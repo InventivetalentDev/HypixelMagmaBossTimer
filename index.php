@@ -117,7 +117,7 @@
                     <br/>
                     This is meant to help everyone. Please don't abuse it by submitting false information. Thanks! :)<br/>
                     <br/>
-                    There are currently <strong><span id="activeUserCount">0</span> users waiting </strong>
+                    There are currently <strong><span id="activeUserCount">0</span></strong> users watching this timer!
 
                 </p>
             </div>
