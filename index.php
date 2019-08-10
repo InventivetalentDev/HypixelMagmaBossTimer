@@ -3,6 +3,7 @@
     <head>
         <title>Hypixel Skyblock Magma Boss Timer</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
         <style>
             html, body, .the-wrapper {
@@ -42,12 +43,24 @@
                 font-size: 5rem;
                 margin: 0;
             }
+
+
+            #btnOverlay{
+                position: fixed;
+                top: 5px;
+                right: 5px;
+            }
         </style>
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
     <body>
         <div id="bgImage"></div>
+
+        <div id="btnOverlay">
+            <a href="#" id="historyLink"><i class="material-icons">trending_up</i></a>
+            <a href="#" id="infoLink"><i class="material-icons">info_outline</i></a>
+        </div>
 
         <div id="content" class="container">
 
@@ -122,7 +135,7 @@
                     let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).hours();
 
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
-                    $("#lastTrackedSpawn").html(moment(estimateData.latest.spawn).fromNow() + "<br/> (" + moment(estimateData.latest.spawn).format('MMMM Do YYYY, h:mm:ss a')+")" + (hoursSinceLastSpawn > 5 ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
+                    $("#lastTrackedSpawn").html(moment(estimateData.latest.spawn).fromNow() + "<br/> (" + moment(estimateData.latest.spawn).format('MMMM Do YYYY, h:mm:ss a') + ")" + (hoursSinceLastSpawn > 5 ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
                     let duration = estimateData.estimate - now;
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
@@ -131,16 +144,19 @@
 
                     if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                         $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
+                        $("#waveBlazeBtn").attr("disabled", true);
                     } else {
                         $("#waveBlazeTime").text("");
                     }
                     if (now - estimateData.latest.magma < tenMinsInMillis) {
                         $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
+                        $("#waveMagmaBtn").attr("disabled", true);
                     } else {
                         $("#waveMagmaTime").text("");
                     }
                     if (now - estimateData.latest.music < fiveMinsInMillis) {
                         $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
+                        $("#musicBtn").attr("disabled", true);
                     } else {
                         $("#musicTime").text("");
                     }
@@ -181,7 +197,8 @@
                                 url: "add_event.php",
                                 data: {type: "blaze", captcha: reCaptchaToken}
                             }).done(function () {
-                                $this.css("display", "none");
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
 
                                 refreshEstimate()
                             })
@@ -199,7 +216,8 @@
                                 url: "add_event.php",
                                 data: {type: "magma", captcha: reCaptchaToken}
                             }).done(function () {
-                                $this.css("display", "none");
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
 
                                 refreshEstimate();
                             })
@@ -217,7 +235,8 @@
                                 url: "add_event.php",
                                 data: {type: "music", captcha: reCaptchaToken}
                             }).done(function () {
-                                $this.css("display", "none");
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
 
                                 refreshEstimate();
                             })
@@ -229,13 +248,14 @@
                     let $this = $(this);
                     confirmAndCaptchaAdd("a boss spawn", function (b) {
                         if (b) {
-                            $this.attr("disabled", true);
+                            // $this.attr("disabled", true);
                             $.ajax({
                                 method: "POST",
                                 url: "add_spawn.php",
                                 data: {captcha: reCaptchaToken}
                             }).done(function () {
-                                $this.css("display", "none");
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
 
                                 // refreshEstimate();
                             })
