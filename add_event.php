@@ -20,7 +20,7 @@ if (!isset($_POST["captcha"])) {
     die("missing captcha");
 }
 
-$confirmationCheckFactor = 60;
+$confirmationCheckFactor = 80;
 
 //die("*sigh* I said don't abuse plz :(");
 
