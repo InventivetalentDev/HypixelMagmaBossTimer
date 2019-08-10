@@ -20,6 +20,7 @@ if (!isset($_POST["captcha"])) {
     die("missing captcha");
 }
 
+$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
 include_once "common.php";
 
@@ -28,8 +29,8 @@ if ($res = checkCaptcha($_POST["captcha"])) {
 
     $date = date("Y-m-d H:i:s");
     $rel = -1;
-    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type) VALUES(?,?,?)");
-    $stmt->bind_param("iss", $rel, $date, $type);
+    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type,ip) VALUES(?,?,?,?)");
+    $stmt->bind_param("isss", $rel, $date, $type,$ip);
     $stmt->execute();
     $stmt->close();
 
