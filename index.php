@@ -265,6 +265,19 @@
                                 $this.attr("disabled", true);
 
                                 // refreshEstimate();
+                            });
+                            //TODO: remove add_spawn call
+
+
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "spawn", captcha: reCaptchaToken}
+                            }).done(function () {
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
+
+                                // refreshEstimate();
                             })
                         }
                     })

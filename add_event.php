@@ -12,13 +12,15 @@ if (!isset($_POST["type"])) {
     die("missing type");
 }
 $type = $_POST["type"];
-if ($type !== "blaze" && $type !== "magma"&&$type!=="music") {
+if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music") {
     die("unknown event");
 }
 
 if (!isset($_POST["captcha"])) {
     die("missing captcha");
 }
+
+$confirmationCheckFactor = 60;
 
 //die("*sigh* I said don't abuse plz :(");
 
@@ -29,29 +31,84 @@ include_once "common.php";
 if ($res = checkCaptcha($_POST["captcha"])) {
     include_once "db_stuff.php";
 
-    $stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_events WHERE type=? AND ip=?");
-    $stmt->bind_param("ss", $type,$ip);
+    $date = date("Y-m-d H:i:s");
+    $time = time();
+
+    // Check last time
+    $stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC");
+    $stmt->bind_param("ss", $type, $ip);
     $stmt->execute();
     $stmt->bind_result($lastTime);
     if ($stmt->fetch()) {
         $lastTime = strtotime($lastTime);
-        if (time() - $lastTime < 3600) {
+        $stmt->close();
+        unset($stmt);
+        if ($time - $lastTime < 3600) {
             die("nope. too soon.");
         }
+    }else{
+        $stmt->close();
     }
-    $stmt->close();
     unset($stmt);
 
-    $date = date("Y-m-d H:i:s");
-    $rel = -1;
-    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type,ip) VALUES(?,?,?,?)");
-    $stmt->bind_param("isss", $rel, $date, $type,$ip);
+    // Insert new request
+    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip) VALUES(?,?,?)");
+    $stmt->bind_param("sss", $date, $type, $ip);
     $stmt->execute();
     $stmt->close();
     unset($stmt);
 
+    ////////////////////////////////
+
+    $roundedTime = floor(floor($time / $confirmationCheckFactor) * $confirmationCheckFactor);
+    $roundedDate = date("Y-m-d H:i:s", $roundedTime);
+    $confirmations = 1;
+
+    $stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC");
+    $stmt->bind_param("ss", $type, $roundedDate);
+    $stmt->execute();
+    $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
+    if ($stmt->fetch()) {
+        $roundedTime = strtotime($roundedDate);
+        $averageTime = strtotime($averageDate);
+
+        $averageTime += time();
+        $averageTime /= 2;
+
+        $stmt->close();
+        unset($stmt);
+
+        $confirmations += 1;
+        $averageDate = date("Y-m-d H:i:s", $averageTime);
+
+        $stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?");
+        $stmt->bind_param("isss", $confirmations, $averageDate, $type, $roundedDate);
+        $stmt->execute();
+        $stmt->close();
+        unset($stmt);
+
+
+    } else {
+        $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,confirmations,time_average) VALUES(?,?,?,?)");
+        $stmt->bind_param("ssis", $type, $roundedDate, $confirmations, $date);
+        $stmt->execute();
+        $stmt->close();
+        unset($stmt);
+    }
+
+
+    ////TODO: REMOVE
+    unset($stmt);
+    $rel = -1;
+    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type,ip) VALUES(?,?,?,?)");
+    $stmt->bind_param("isss", $rel, $date, $type, $ip);
+    $stmt->execute();
+    $stmt->close();
+    unset($stmt);
+    //TODO
+
     echo "added";
-}else{
+} else {
     die("failed to verify captcha");
 }
 
