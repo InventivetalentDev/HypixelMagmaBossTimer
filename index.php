@@ -57,12 +57,12 @@
                     <h1 class="center-align" id="time">00:00:00</h1>
                     <span id="nextTime"></span>
                     <br/>
+                    <h4 class="center-align" id="suggestionMessage"></h4>
+                    <br/>
                     <br/>
                     <span>Last tracked spawn was <span id="lastTrackedSpawn"></span></span>
                 </div>
 
-                <br/>
-                <br/>
                 <br/>
                 <br/>
 
@@ -142,6 +142,16 @@
                     } else {
                         $("#musicTime").text("");
                     }
+
+
+                    let message = "";
+                    if (duration < tenMinsInMillis) {
+                        message = "If you're not already in the Nether Fortress, you should get going!";
+                    }
+                    if (duration < fiveMinsInMillis) {
+                        message = "Get ready!";
+                    }
+                    $("#suggestionMessage").text(message);
                 }
 
                 function refreshEstimate() {
