@@ -57,10 +57,12 @@
     <body>
         <div id="bgImage"></div>
 
+        <!--
         <div id="btnOverlay">
             <a href="#" id="historyLink"><i class="material-icons">trending_up</i></a>
             <a href="#" id="infoLink"><i class="material-icons">info_outline</i></a>
         </div>
+        -->
 
         <div id="content" class="container">
 
@@ -80,6 +82,8 @@
                 <br/>
 
                 <div class="row center-align">
+                    <strong>NOTE: Please click the buttons below <i>only</i> if the events actually occurred!</strong><br/>
+                    <span>They will update the timer for <b>everyone</b>!</span><br/>
                     <button disabled class="btn center-align track-btn amber" id="waveBlazeBtn">
                         Blaze Wave Spawned <span id="waveBlazeTime"></span>
                     </button>
