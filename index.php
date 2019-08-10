@@ -11,8 +11,10 @@
                 overflow: hidden;
             }
 
-            body {
+            body,.modal-content{
                 background-color: rgb(55, 40, 47);
+            }
+            body {
                 color: #e9e9e9;
             }
 
@@ -57,12 +59,10 @@
     <body>
         <div id="bgImage"></div>
 
-        <!--
         <div id="btnOverlay">
-            <a href="#" id="historyLink"><i class="material-icons">trending_up</i></a>
-            <a href="#" id="infoLink"><i class="material-icons">info_outline</i></a>
+            <!--<a href="#" id="historyLink"><i class="material-icons">trending_up</i></a>-->
+            <a href="#infoModal" id="infoLink" class="modal-trigger"><i class="material-icons">info_outline</i></a>
         </div>
-        -->
 
         <div id="content" class="container">
 
@@ -107,12 +107,30 @@
         <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
 
 
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <h4>About</h4>
+                <p>
+                    <a href="https://hypixel.net/threads/magma-boss-timer-app.2238543/" target="_blank">This tool</a> can easily track the spawn times and related events of the Magma Boss on Hypixel's Skyblock.<br/>
+                    You simply check the timer, wait for the boss to spawn and click the according buttons whenever one of the events or the spawn itself occurs.
+                    The timer will update accordingly and display the estimated spawn time, based on the known delays between events.<br/>
+                    This is meant to help everyone. Please don't abuse it by submitting false information. Thanks! :)<br/>
+                    <br/>
+                    There are currently <strong><span id="activeUserCount">0</span></strong> users watching this timer!
+
+                </p>
+            </div>
+        </div>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
         <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>
         <script>
             $(document).ready(function () {
+                // Modal init
+                let elems = document.querySelectorAll('.modal');
+                let instances = M.Modal.init(elems);
 
                 let reCaptchaToken = null;
                 grecaptcha.ready(function () {
@@ -188,6 +206,10 @@
                         clearInterval(timerId);
                         timerId = setInterval(updateTimer, 1000);// tick every second
                     });
+
+                    $.ajax("get_active_users.php").done(function (data) {
+                        $("#activeUserCount").text(data);
+                    })
                 }
 
                 refreshEstimate();
@@ -203,6 +225,16 @@
                 ping();
                 setInterval(ping, 30000);
 
+
+                function ping() {
+                    $.ajax({
+                        method: "POST",
+                        url: "ping.php"
+                    })
+                }
+
+                ping();
+                setInterval(ping, 30000);
 
                 $("#waveBlazeBtn").click(function () {
                     let $this = $(this);
