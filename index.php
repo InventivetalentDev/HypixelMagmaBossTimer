@@ -119,8 +119,10 @@
                 function updateTimer() {
                     now = Date.now();
 
+                    let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).hours();
+
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
-                    $("#lastTrackedSpawn").text(moment(estimateData.latest.spawn).fromNow() + " (" + moment(estimateData.latest.spawn).format('MMMM Do YYYY, h:mm:ss a') + ")");
+                    $("#lastTrackedSpawn").html(moment(estimateData.latest.spawn).fromNow() + "<br/> (" + moment(estimateData.latest.spawn).format('MMMM Do YYYY, h:mm:ss a')+")" + (hoursSinceLastSpawn > 5 ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
                     let duration = estimateData.estimate - now;
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
@@ -244,7 +246,7 @@
 
                 function confirmAndCaptchaAdd(type, cb) {
                     function checkCaptcha() {
-                        grecaptcha.execute('6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE', {action: (type||"homepage").replace(/ /gi,"_")}).then(function (token) {
+                        grecaptcha.execute('6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE', {action: (type || "homepage").replace(/ /gi, "_")}).then(function (token) {
                             console.log("got recaptcha token");
                             reCaptchaToken = token;
 
