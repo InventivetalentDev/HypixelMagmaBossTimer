@@ -226,16 +226,6 @@
                 setInterval(ping, 30000);
 
 
-                function ping() {
-                    $.ajax({
-                        method: "POST",
-                        url: "ping.php"
-                    })
-                }
-
-                ping();
-                setInterval(ping, 30000);
-
                 $("#waveBlazeBtn").click(function () {
                     let $this = $(this);
                     confirmAndCaptchaAdd("a blaze wave", function (b) {
