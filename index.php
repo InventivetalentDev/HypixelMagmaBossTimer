@@ -150,19 +150,19 @@
 
                     if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                         $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
-                        $("#waveBlazeBtn").attr("disabled", true);
+                        // $("#waveBlazeBtn").attr("disabled", true);
                     } else {
                         $("#waveBlazeTime").text("");
                     }
                     if (now - estimateData.latest.magma < tenMinsInMillis) {
                         $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
-                        $("#waveMagmaBtn").attr("disabled", true);
+                        // $("#waveMagmaBtn").attr("disabled", true);
                     } else {
                         $("#waveMagmaTime").text("");
                     }
                     if (now - estimateData.latest.music < fiveMinsInMillis) {
                         $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
-                        $("#musicBtn").attr("disabled", true);
+                        // $("#musicBtn").attr("disabled", true);
                     } else {
                         $("#musicTime").text("");
                     }

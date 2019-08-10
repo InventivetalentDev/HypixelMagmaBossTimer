@@ -4,7 +4,7 @@
 include_once "db_stuff.php";
 
 $confirmationCheckFactor = 30;
-$requiredConfirmations = 3;
+$requiredConfirmations = 4;
 
 $spawn_times = array();
 $spawn_confirmations = array();
@@ -33,7 +33,7 @@ while ($row = $stmt->fetch()) {
 $stmt->close();
 unset($stmt);
 
-$lastSpawn = $spawn_times[0];
+$lastSpawn = 0;
 foreach ($spawn_confirmations as $k => $v) {
     if ($v >= $requiredConfirmations) {
         $lastSpawn = intval($k) * $confirmationCheckFactor * 1000;
@@ -76,9 +76,9 @@ $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
 
-$lastBlazeEvent = array_values($event_times["blaze"])[0];// ~20mins
-$lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
-$lastMusicEvent = array_values($event_times["music"])[0];// ~5mins
+$lastBlazeEvent = /*array_values($event_times["blaze"])[0]*/0;// ~20mins
+$lastMagmaEvent = /*array_values($event_times["magma"])[0]*/0;// ~10mins
+$lastMusicEvent = /*array_values($event_times["music"])[0]*/0;// ~5mins
 
 foreach ($event_confirmations["blaze"] as $k => $v) {
     if ($v >= $requiredConfirmations) {
