@@ -6,7 +6,7 @@
 
 include_once "db_stuff.php";
 
-$stmt = $conn->prepare("SELECT ip,time FROM hypixel_skyblock_magma_timer_pings WHERE time > NOW() - INTERVAL 5 MINUTE");
+$stmt = $conn->prepare("SELECT ip,time FROM hypixel_skyblock_magma_timer_pings WHERE time > NOW() - INTERVAL 2 MINUTE");
 $stmt->execute();
 $stmt->bind_result($ip, $time);
 $c=0;
