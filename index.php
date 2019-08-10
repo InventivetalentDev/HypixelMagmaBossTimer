@@ -114,7 +114,6 @@
                     <a href="https://hypixel.net/threads/magma-boss-timer-app.2238543/" target="_blank">This tool</a> can easily track the spawn times and related events of the Magma Boss on Hypixel's Skyblock.<br/>
                     You simply check the timer, wait for the boss to spawn and click the according buttons whenever one of the events or the spawn itself occurs.
                     The timer will update accordingly and display the estimated spawn time, based on the known delays between events.<br/>
-                    <br/>
                     This is meant to help everyone. Please don't abuse it by submitting false information. Thanks! :)<br/>
                     <br/>
                     There are currently <strong><span id="activeUserCount">0</span></strong> users watching this timer!
