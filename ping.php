@@ -5,7 +5,7 @@ if ($_SERVER['REQUEST_METHOD'] !== "POST") {
 }
 
 $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
-$lastFocused = $_GET["lastFocused"];
+$lastFocused = $_POST["lastFocused"];
 
 include_once "db_stuff.php";
 
