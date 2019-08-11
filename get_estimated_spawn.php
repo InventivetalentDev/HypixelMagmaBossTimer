@@ -46,6 +46,7 @@ $twoHoursInMillis = 7.2e+6;
 $twentyMinsInMillis = 1.2e+6;
 $tenMinsInMillis = 600000;
 $fiveMinsInMillis = 300000;
+$twoMinsInMillis = 120000;
 
 
 $now = time() * 1000;
@@ -53,7 +54,7 @@ $now = time() * 1000;
 $lastSpawn = array_values($event_times["spawn"])[0];// ~2hrs
 $lastBlazeEvent = array_values($event_times["blaze"])[0];// ~20mins
 $lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
-$lastMusicEvent = array_values($event_times["music"])[0];// ~5mins
+$lastMusicEvent = array_values($event_times["music"])[0];// ~2mins
 
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
@@ -73,8 +74,8 @@ if ($lastMagmaEvent > $lastSpawn && $now - $lastMagmaEvent < $tenMinsInMillis) {
     $estimateFromMagma = $estimate;
     $estimateSource = "magma";
 }
-if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $fiveMinsInMillis) {
-    $estimate = $lastMusicEvent + $fiveMinsInMillis;
+if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $twoMinsInMillis) {
+    $estimate = $lastMusicEvent + $twoMinsInMillis;
     $estimateFromMusic = $estimate;
     $estimateSource = "music";
 }
