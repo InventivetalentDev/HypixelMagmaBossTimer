@@ -219,6 +219,7 @@
 
                 let timerId = -1;
                 let historyHours = 4;
+                let lastFocused = now / 1000;
 
                 function updateTimer() {
                     now = Date.now();
@@ -293,7 +294,10 @@
                 function ping() {
                     $.ajax({
                         method: "POST",
-                        url: "ping.php"
+                        url: "ping.php",
+                        data:{
+                            lastFocused: Math.floor(lastFocused)
+                        }
                     })
                 }
 
@@ -445,11 +449,15 @@
 
                 $("#timelineLoadMore").click(function () {
                     if (historyHours < 24) {
-                        historyHours+=2;
-                    }else{
+                        historyHours += 2;
+                    } else {
                         $(this).attr("disabled", true);
                     }
                     makeTimelineChart();
+                });
+
+                $(window).on("focus", function () {
+                    lastFocused = Date.now() / 1000;
                 });
 
                 function showNotification(body, title) {
