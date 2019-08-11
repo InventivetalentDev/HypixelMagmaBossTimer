@@ -167,6 +167,8 @@
                 <h4>Timeline</h4>
 
                 <div id="timelineChart"></div>
+
+                <button class="btn" id="timelineLoadMore">&lt; Load More</button>
             </div>
         </div>
 
@@ -216,6 +218,7 @@
                 let estimateData = {};
 
                 let timerId = -1;
+                let historyHours = 4;
 
                 function updateTimer() {
                     now = Date.now();
@@ -389,7 +392,7 @@
 
 
                 function makeTimelineChart() {
-                    $.ajax("history_chart.php").done(function (data) {
+                    $.ajax("history_chart.php?hours=" + historyHours).done(function (data) {
                         Highcharts.chart('timelineChart', {
                             chart: {
                                 zoomType: 'x',
@@ -439,6 +442,15 @@
                         });
                     });
                 }
+
+                $("#timelineLoadMore").click(function () {
+                    if (historyHours < 24) {
+                        historyHours+=2;
+                    }else{
+                        $(this).attr("disabled", true);
+                    }
+                    makeTimelineChart();
+                });
 
                 function showNotification(body, title) {
                     if (!("Notification" in window)) {
