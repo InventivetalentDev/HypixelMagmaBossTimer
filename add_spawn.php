@@ -42,7 +42,7 @@ if ($res = checkCaptcha($_POST["captcha"])) {
     $stmt->close();
     unset($stmt);
 
-    echo "added";
+    echo "added (this route is deprecated!)";
 } else {
     die("failed to verify captcha");
 }
