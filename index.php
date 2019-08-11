@@ -287,20 +287,7 @@
                     let $this = $(this);
                     confirmAndCaptchaAdd("a boss spawn", function (b) {
                         if (b) {
-                            // $this.attr("disabled", true);
-                            $.ajax({
-                                method: "POST",
-                                url: "add_spawn.php",
-                                data: {captcha: reCaptchaToken}
-                            }).done(function () {
-                                // $this.css("display", "none");
-                                $this.attr("disabled", true);
-
-                                // refreshEstimate();
-                            });
-                            //TODO: remove add_spawn call
-
-
+                            $this.attr("disabled", true);
                             $.ajax({
                                 method: "POST",
                                 url: "add_event.php",
