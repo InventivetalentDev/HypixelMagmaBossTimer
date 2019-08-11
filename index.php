@@ -395,7 +395,9 @@
                                 zoomType: 'x',
                                 type: 'timeline',
                                 height: '20%',
-                                backgroundColor: "rgb(55, 40, 47)"
+                                backgroundColor: "rgb(55, 40, 47)",
+                                marginLeft: 80,
+                                marginRight: 80
                             },
                             xAxis: {
                                 type: 'datetime',
@@ -418,6 +420,7 @@
                                 style: {
                                     //width: 300
                                 },
+                                //TODO: use formatter function in order to display extra data
                                 headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}<br/>',
                                 pointFormat: '<span>{point.x:%y-%m-%d} <b>{point.x:%H:%M:%S}</b></span><br/>',
                                 footerFormat: ''
