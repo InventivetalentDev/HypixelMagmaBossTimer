@@ -1,0 +1,14 @@
+<html>
+    <body>
+        <script>
+            Notification.requestPermission().then(function(result) {
+                console.log(result);
+                let n = new Notification("Magma Boss Reminder",{
+                    body:"The Skyblock Magma Boss will spawn in less than 10 minutes!",
+                    icon: "https://hypixel.inventivetalent.org/img/Magma_Cube_50px.png"
+                });
+                console.log(n);
+            });
+        </script>
+    </body>
+</html>

@@ -56,10 +56,11 @@
                 right: 5px;
             }
 
-            #socialButtons{
+            #socialButtons {
                 font-size: 32px;
             }
-            #socialButtons>a{
+
+            #socialButtons > a {
                 margin-left: 4px;
             }
         </style>
@@ -132,11 +133,32 @@
                 </p>
                 <div class="divider"></div>
                 <br/>
+                <div class="row">
+                    <form class="col s12">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <span>10 Minute Notification</span>
+                                <div class="switch">
+                                    <label>
+                                        Off
+                                        <input type="checkbox" id="tenMinNotificationSwitch">
+                                        <span class="lever"></span>
+                                        On
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="divider"></div>
+                <br/>
                 <span id="socialButtons">
                     <a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a>
                     <a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a>
                     <a href="https://donation.inventivetalent.org/"><i class="fab fa-patreon"></i></a>
                 </span>
+
             </div>
         </div>
 
@@ -166,6 +188,8 @@
                 let twentyMinsInMillis = 1.2e+6;
                 let tenMinsInMillis = 600000;
                 let fiveMinsInMillis = 300000;
+
+                let tenMinuteNotification;
 
                 let estimateData = {};
 
@@ -207,6 +231,14 @@
                     let message = "";
                     if (duration < tenMinsInMillis) {
                         message = "If you're not already in the Nether Fortress, you should get going!";
+
+                        if (localStorage.getItem("tenMinNotification") === "true") {
+                            if (!tenMinuteNotification) {
+                                tenMinuteNotification = showNotification("The Skyblock Magma Boss will spawn in less than 10 minutes!");
+                            }
+                        }
+                    } else {
+                        tenMinuteNotification = null;
                     }
                     if (duration < fiveMinsInMillis) {
                         message = "Get ready!";
@@ -319,6 +351,35 @@
                         }
                     })
                 });
+
+                $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true");
+                $("#tenMinNotificationSwitch").change(function () {
+                    let checked = $(this).is(":checked");
+                    if(checked) {
+                        Notification.requestPermission().then(function (result) {
+                            console.log(result);
+                            localStorage.setItem("tenMinNotification", "true");
+                        });
+                    }else{
+                        localStorage.setItem("tenMinNotification", "false");
+                    }
+                });
+
+                function showNotification(body, title) {
+                    if (!("Notification" in window)) {
+                        console.warn("Browser does not support notifications");
+                        return;
+                    }
+                    if (Notification.permission !== "granted") {
+                        console.warn("Notifications not granted");
+                        return;
+                    }
+
+                    return new Notification(title || "Magma Boss Reminder", {
+                        body: body,
+                        icon: "https://hypixel.inventivetalent.org/img/Magma_Cube_50px.png"
+                    });
+                }
 
 
                 function confirmAndCaptchaAdd(type, cb) {
