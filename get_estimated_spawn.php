@@ -1,61 +1,43 @@
 <?php
 
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 
 include_once "db_stuff.php";
 
-$confirmationCheckFactor = 30;
-$requiredConfirmations = 4;
-
-$spawn_times = array();
-$spawn_confirmations = array();
+$events = array("blaze", "magma", "music", "spawn");
 $event_times = array(
     "blaze" => array(),
     "magma" => array(),
-    "music" => array()
+    "music" => array(),
+    "spawn" => array()
 );
-$event_confirmations = array();
+$event_confirmations = array(
+    "blaze"=>0,
+    "magma"=>0,
+    "music"=>0,
+    "spawn"=>0
+);
 
-$stmt = $conn->prepare("SELECT id,rel,time FROM hypixel_skyblock_magma_timer_spawns WHERE rel=-1 ORDER BY time DESC");
+$minConfirmations = 3;//TODO: make this relative to the amount of currently watching users
+
+
+$stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC");
+$stmt->bind_param("i", $minConfirmations);
 $stmt->execute();
-$stmt->bind_result($id, $rel, $time);
+$stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
+//TODO: we can probably make this more efficient than iterating through every row
 while ($row = $stmt->fetch()) {
-//    echo "spawn: " . $time . "\n";
-    $t = strtotime($time);
-    $spawn_times[] = $t * 1000;
+    echo "$type: " . $averageDate . "\n";
+    $averageTime = strtotime($averageDate);
+    $event_times[$type][] = $averageTime * 1000;
 
-    $t2 = floor($t / $confirmationCheckFactor);
-    if (!isset($spawn_confirmations["$t2"])) {
-        $spawn_confirmations["$t2"] = 1;
+
+    // Just using the first available one for now (TODO maybe)
+    if ($event_confirmations[$type] <= 0) {
+        $event_confirmations[$type] = $confirmations;
     }
-    $spawn_confirmations["$t2"]++;
-
-}
-$stmt->close();
-unset($stmt);
-
-$lastSpawn = 0;
-foreach ($spawn_confirmations as $k => $v) {
-    if ($v >= $requiredConfirmations) {
-        $lastSpawn = intval($k) * $confirmationCheckFactor * 1000;
-        break;
-    }
-}
-
-
-$stmt = $conn->prepare("SELECT id,rel,type,time FROM hypixel_skyblock_magma_timer_events WHERE rel=-1 ORDER BY time DESC");
-$stmt->execute();
-$stmt->bind_result($id, $rel, $type, $time);
-while ($row = $stmt->fetch()) {
-//    echo "$type: " . $time . "\n";
-    $t = strtotime($time);
-    $event_times[$type][] = $t * 1000;
-
-
-    $t2 = floor($t / $confirmationCheckFactor);
-    if (!isset($event_confirmations[$type]["$t2"])) {
-        $event_confirmations[$type]["$t2"] = 1;
-    }
-    $event_confirmations[$type]["$t2"]++;
 }
 $stmt->close();
 unset($stmt);
@@ -69,35 +51,17 @@ $fiveMinsInMillis = 300000;
 
 $now = time() * 1000;
 
+$lastSpawn = array_values($event_times["spawn"])[0];// ~2hrs
+$lastBlazeEvent = array_values($event_times["blaze"])[0];// ~20mins
+$lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
+$lastMusicEvent = array_values($event_times["music"])[0];// ~5mins
+
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
 $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
-
-$lastBlazeEvent = /*array_values($event_times["blaze"])[0]*/0;// ~20mins
-$lastMagmaEvent = /*array_values($event_times["magma"])[0]*/0;// ~10mins
-$lastMusicEvent = /*array_values($event_times["music"])[0]*/0;// ~5mins
-
-foreach ($event_confirmations["blaze"] as $k => $v) {
-    if ($v >= $requiredConfirmations) {
-        $lastBlazeEvent = intval($k) * $confirmationCheckFactor * 1000;
-        break;
-    }
-}
-foreach ($event_confirmations["magma"] as $k => $v) {
-    if ($v >= $requiredConfirmations) {
-        $lastMagmaEvent = intval($k) * $confirmationCheckFactor * 1000;
-        break;
-    }
-}
-foreach ($event_confirmations["music"] as $k => $v) {
-    if ($v >= $requiredConfirmations) {
-        $lastMusicEvent = intval($k) * $confirmationCheckFactor * 1000;
-        break;
-    }
-}
 
 
 if ($lastBlazeEvent > $lastSpawn && $now - $lastBlazeEvent < $twentyMinsInMillis) {
@@ -120,10 +84,7 @@ if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $fiveMinsInMillis) 
 
 header("Content-Type: application/json");
 echo json_encode(array(
-    "spawnTimes" => $spawn_times,
-    "spawnConfirmations" => $spawn_confirmations,
     "eventTimes" => $event_times,
-    "eventConfirmations" => $event_confirmations,
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $estimate,
     "estimateSource" => $estimateSource,
@@ -138,5 +99,6 @@ echo json_encode(array(
         "blaze" => $lastBlazeEvent,
         "magma" => $lastMagmaEvent,
         "music" => $lastMusicEvent
-    )
+    ),
+    "latestConfirmations"=>$event_confirmations,
 ));
