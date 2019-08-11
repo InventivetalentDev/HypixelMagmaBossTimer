@@ -72,7 +72,7 @@
         <div id="bgImage"></div>
 
         <div id="btnOverlay">
-            <!--<a href="#" id="historyLink"><i class="material-icons">trending_up</i></a>-->
+            <a href="#timelineModal" id="historyLink" class="modal-trigger"><i class="material-icons">trending_up</i></a>
             <a href="#infoModal" id="infoLink" class="modal-trigger"><i class="material-icons">info_outline</i></a>
         </div>
 
@@ -162,10 +162,20 @@
             </div>
         </div>
 
+        <div id="timelineModal" class="modal bottom-sheet">
+            <div class="modal-content">
+                <h4>Timeline</h4>
+
+                <div id="timelineChart"></div>
+            </div>
+        </div>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
         <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>
+        <script src="https://code.highcharts.com/highcharts.js"></script>
+        <script src="https://code.highcharts.com/modules/timeline.js"></script>
         <script>
             $(document).ready(function () {
                 console.log(
@@ -177,8 +187,12 @@
                     "================================================================\n");
 
                 // Modal init
-                let elems = document.querySelectorAll('.modal');
-                let instances = M.Modal.init(elems);
+                $('#infoModal').modal();
+                $('#timelineModal').modal({
+                    onOpenEnd: function () {
+                        makeTimelineChart();
+                    }
+                })
 
                 let reCaptchaToken = null;
                 grecaptcha.ready(function () {
@@ -372,6 +386,56 @@
                         localStorage.setItem("tenMinNotification", "false");
                     }
                 });
+
+
+                function makeTimelineChart() {
+                    $.ajax("history_chart.php").done(function (data) {
+                        Highcharts.chart('timelineChart', {
+                            chart: {
+                                zoomType: 'x',
+                                type: 'timeline',
+                                height: '20%',
+                                backgroundColor: "rgb(55, 40, 47)"
+                            },
+                            xAxis: {
+                                type: 'datetime',
+                                visible: false
+                            },
+                            yAxis: {
+                                gridLineWidth: 1,
+                                title: null,
+                                labels: {
+                                    enabled: false
+                                }
+                            },
+                            legend: {
+                                enabled: false
+                            },
+                            title: {
+                                text: null
+                            },
+                            tooltip: {
+                                style: {
+                                    //width: 300
+                                },
+                                headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}<br/>',
+                                pointFormat: '<span>{point.x:%y-%m-%d} <b>{point.x:%H:%M:%S}</b></span><br/>',
+                                footerFormat: ''
+                            },
+                            series: [{
+                                dataLabels: {
+                                    allowOverlap: false,
+                                    /* format: '<span style="color:{point.color}">● </span><span style="font-weight: bold;" > ' +
+                                         '{point.x:%d %b %Y}</span><br/>{point.name}'*/
+                                },
+                                marker: {
+                                    symbol: 'circle'
+                                },
+                                data: data
+                            }]
+                        });
+                    });
+                }
 
                 function showNotification(body, title) {
                     if (!("Notification" in window)) {
