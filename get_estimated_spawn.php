@@ -29,7 +29,6 @@ $stmt->execute();
 $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
 //TODO: we can probably make this more efficient than iterating through every row
 while ($row = $stmt->fetch()) {
-    echo "$type: " . $averageDate . "\n";
     $averageTime = strtotime($averageDate);
     $event_times[$type][] = $averageTime * 1000;
 
