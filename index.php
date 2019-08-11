@@ -234,7 +234,7 @@
 
                         if (localStorage.getItem("tenMinNotification") === "true") {
                             if (!tenMinuteNotification) {
-                                tenMinuteNotification = showNotification("The Skyblock Magma Boss will spawn in less than 10 minutes!");
+                                tenMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than 10 minutes!");
                             }
                         }
                     } else {
