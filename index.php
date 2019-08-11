@@ -4,6 +4,8 @@
         <title>Hypixel Skyblock Magma Boss Timer</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css" integrity="sha256-AaQqnjfGDRZd/lUp0Dvy7URGOyRsh8g9JdWUkyYxNfI=" crossorigin="anonymous"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/brands.min.css" integrity="sha256-u8123o+sLy8uk0Du9H0Ub+KinAoHanzGsBqDkWHY1f8=" crossorigin="anonymous"/>
 
         <style>
             html, body, .the-wrapper {
@@ -11,9 +13,10 @@
                 overflow: hidden;
             }
 
-            body,.modal-content{
+            body, .modal-content {
                 background-color: rgb(55, 40, 47);
             }
+
             body {
                 color: #e9e9e9;
             }
@@ -47,12 +50,20 @@
             }
 
 
-            #btnOverlay{
+            #btnOverlay {
                 position: fixed;
                 top: 5px;
                 right: 5px;
             }
+
+            #socialButtons{
+                font-size: 32px;
+            }
+            #socialButtons>a{
+                margin-left: 4px;
+            }
         </style>
+
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
     </head>
@@ -104,7 +115,7 @@
 
         </div>
 
-      <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
+        <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
 
 
         <div id="infoModal" class="modal">
@@ -117,8 +128,11 @@
                     This is meant to help everyone. Please don't abuse it by submitting false information. Thanks! :)<br/>
                     <br/>
                     There are currently <strong><span id="activeUserCount">0</span></strong> users watching this timer!
-
+                    <br/>
                 </p>
+                <div class="divider"></div>
+                <br/>
+                <span id="socialButtons"><a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a><a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a></span>
             </div>
         </div>
 
