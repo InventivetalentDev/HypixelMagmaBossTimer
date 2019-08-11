@@ -132,7 +132,11 @@
                 </p>
                 <div class="divider"></div>
                 <br/>
-                <span id="socialButtons"><a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a><a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a></span>
+                <span id="socialButtons">
+                    <a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a>
+                    <a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a>
+                    <a href="https://donation.inventivetalent.org/"><i class="fab fa-patreon"></i></a>
+                </span>
             </div>
         </div>
 
