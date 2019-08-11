@@ -168,6 +168,14 @@
         <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>
         <script>
             $(document).ready(function () {
+                console.log(
+                    "================================================================\n" +
+                    "   Hey there o/\n" +
+                    "   Found a bug or wanna contribute to this project?\n" +
+                    "   Awesome, it's on GitHub!\n" +
+                    "   https://github.com/InventivetalentDev/HypixelMagmaBossTimer\n" +
+                    "================================================================\n");
+
                 // Modal init
                 let elems = document.querySelectorAll('.modal');
                 let instances = M.Modal.init(elems);
@@ -355,12 +363,12 @@
                 $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true");
                 $("#tenMinNotificationSwitch").change(function () {
                     let checked = $(this).is(":checked");
-                    if(checked) {
+                    if (checked) {
                         Notification.requestPermission().then(function (result) {
                             console.log(result);
                             localStorage.setItem("tenMinNotification", "true");
                         });
-                    }else{
+                    } else {
                         localStorage.setItem("tenMinNotification", "false");
                     }
                 });
