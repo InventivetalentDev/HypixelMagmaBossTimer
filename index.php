@@ -456,7 +456,7 @@
                     makeTimelineChart();
                 });
 
-                $(window).on("focus", function () {
+                $(window).on("focus blur", function () {
                     lastFocused = Date.now() / 1000;
                 });
 
