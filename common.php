@@ -12,7 +12,7 @@ function checkCaptcha($response)
 
     $response = curl_post($url, $fields);
     $response = json_decode($response, true);
-    var_dump($response);
+//    var_dump($response);
     if ($response["success"]) {
         return $response;
     }
