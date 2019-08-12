@@ -96,17 +96,6 @@ if ($res = checkCaptcha($_POST["captcha"])) {
         unset($stmt);
     }
 
-
-    ////TODO: REMOVE
-    unset($stmt);
-    $rel = -1;
-    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events (rel,time,type,ip) VALUES(?,?,?,?)");
-    $stmt->bind_param("isss", $rel, $date, $type, $ip);
-    $stmt->execute();
-    $stmt->close();
-    unset($stmt);
-    //TODO
-
     echo "added";
 } else {
     die("failed to verify captcha");
