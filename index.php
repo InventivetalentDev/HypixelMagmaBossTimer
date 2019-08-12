@@ -166,12 +166,19 @@
 
                 <div class="divider"></div>
                 <br/>
-                <span id="socialButtons">
-                    <a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a>
-                    <a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a>
-                    <a href="https://donation.inventivetalent.org/"><i class="fab fa-patreon"></i></a>
-                    <a href="https://github.com/InventivetalentDev/HypixelMagmaBossTimer"><i class="fab fa-github"></i></a>
-                </span>
+                <div class="row">
+                    <div class="col s6">
+                        <span id="socialButtons">
+                            <a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a>
+                            <a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a>
+                            <a href="https://donation.inventivetalent.org/"><i class="fab fa-patreon"></i></a>
+                            <a href="https://github.com/InventivetalentDev/HypixelMagmaBossTimer"><i class="fab fa-github"></i></a>
+                        </span>
+                    </div>
+                    <div class="col s6 right-align">
+                        <span><a href="https://download.inventivetalent.org/gh/SkyblockBossTimerMod/1.0.0" target="_blank"><b>Download the Minecraft Mod</b> &nbsp; <i class="material-icons small" style="vertical-align:middle;">cloud_download</i></a></span>
+                    </div>
+                </div>
 
             </div>
         </div>
