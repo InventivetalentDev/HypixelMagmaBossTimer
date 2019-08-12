@@ -16,9 +16,11 @@ if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "mu
     die("unknown event");
 }
 
-if (!isset($_POST["captcha"])) {
-    die("missing captcha");
-}
+$username = isset($_POST["username"]) ? $_POST["username"] : "";
+
+//if (!isset($_POST["captcha"])) {
+//    die("missing captcha");
+//}
 
 $confirmationCheckFactor = 80;
 
@@ -28,14 +30,33 @@ $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
 include_once "common.php";
 
-if ($res = checkCaptcha($_POST["captcha"])) {
+$canContinue = false;
+if (isset($_POST["captcha"])) {
+    if ($res = checkCaptcha($_POST["captcha"])) {
+        $canContinue = true;
+    } else {
+        $canContinue = false;
+        die("failed to verify captcha");
+    }
+} else if (strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0 && $_POST["isModRequest"] === "true" && isset($_POST["minecraftUser"])) {
+    $username = $_POST["minecraftUser"];
+    $canContinue = true;
+} else {
+    $canContinue = false;
+    die("invalid request");
+}
+
+
+if ($canContinue) {
     include_once "db_stuff.php";
 
     $date = date("Y-m-d H:i:s");
     $time = time();
 
     // Check last time
-    $stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC");
+    if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC"))) {
+        die($conn->error);
+    }
     $stmt->bind_param("ss", $type, $ip);
     $stmt->execute();
     $stmt->bind_result($lastTime);
@@ -46,15 +67,19 @@ if ($res = checkCaptcha($_POST["captcha"])) {
         if ($time - $lastTime < 3600) {
             die("nope. too soon.");
         }
-    }else{
+    } else {
         $stmt->close();
     }
     unset($stmt);
 
     // Insert new request
-    $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip) VALUES(?,?,?)");
-    $stmt->bind_param("sss", $date, $type, $ip);
-    $stmt->execute();
+    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName) VALUES(?,?,?,?)"))) {
+        die($conn->error);
+    }
+    $stmt->bind_param("ssss", $date, $type, $ip, $username);
+    if (!$stmt->execute()) {
+        die($conn->error);
+    }
     $stmt->close();
     unset($stmt);
 
@@ -98,7 +123,7 @@ if ($res = checkCaptcha($_POST["captcha"])) {
 
     echo "added";
 } else {
-    die("failed to verify captcha");
+    die();
 }
 
 
