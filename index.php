@@ -274,7 +274,7 @@
                         message = "If you're not already in the Nether Fortress, you should get going!";
 
                         if (localStorage.getItem("tenMinNotification") === "true") {
-                            if (!tenMinuteNotification) {
+                            if (!tenMinuteNotification && !fiveMinuteNotification) {
                                 tenMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than 10 minutes!");
                             }
                         }
@@ -289,7 +289,7 @@
                                 fiveMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than five minutes!");
                             }
                         }
-                    }else{
+                    } else {
                         fiveMinuteNotification = null;
                     }
                     $("#suggestionMessage").text(message);
@@ -318,7 +318,7 @@
                     $.ajax({
                         method: "POST",
                         url: "ping.php",
-                        data:{
+                        data: {
                             lastFocused: Math.floor(lastFocused)
                         }
                     })
