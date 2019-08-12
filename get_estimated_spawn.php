@@ -3,7 +3,7 @@
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
-
+include_once "common.php";
 include_once "db_stuff.php";
 
 $events = array("blaze", "magma", "music", "spawn");
@@ -14,10 +14,10 @@ $event_times = array(
     "spawn" => array()
 );
 $event_confirmations = array(
-    "blaze"=>0,
-    "magma"=>0,
-    "music"=>0,
-    "spawn"=>0
+    "blaze" => 0,
+    "magma" => 0,
+    "music" => 0,
+    "spawn" => 0
 );
 
 $minConfirmations = 3;//TODO: make this relative to the amount of currently watching users
@@ -82,11 +82,14 @@ if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $twoMinsInMillis) {
 
 //array_reverse($spawn_times);
 
+$relativeString = time2str($estimate / 1000);
+
 header("Content-Type: application/json");
 echo json_encode(array(
     "eventTimes" => $event_times,
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $estimate,
+    "estimateRelative" => $relativeString,
     "estimateSource" => $estimateSource,
     "estimates" => array(
         "fromSpawn" => $estimateFromSpawn,
@@ -100,5 +103,5 @@ echo json_encode(array(
         "magma" => $lastMagmaEvent,
         "music" => $lastMusicEvent
     ),
-    "latestConfirmations"=>$event_confirmations,
+    "latestConfirmations" => $event_confirmations,
 ));
