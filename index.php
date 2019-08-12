@@ -157,6 +157,7 @@
                     <a href="https://twitter.com/Inventivtalent"><i class="fab fa-twitter"></i></a>
                     <a href="https://yeleha.co/discord"><i class="fab fa-discord"></i></a>
                     <a href="https://donation.inventivetalent.org/"><i class="fab fa-patreon"></i></a>
+                    <a href="https://github.com/InventivetalentDev/HypixelMagmaBossTimer"><i class="fab fa-github"></i></a>
                 </span>
 
             </div>
