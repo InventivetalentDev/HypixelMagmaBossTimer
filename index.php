@@ -148,6 +148,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <span>5 Minute Notification</span>
+                                <div class="switch">
+                                    <label>
+                                        Off
+                                        <input type="checkbox" id="fiveMinNotificationSwitch">
+                                        <span class="lever"></span>
+                                        On
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
@@ -215,6 +228,7 @@
                 let fiveMinsInMillis = 300000;
 
                 let tenMinuteNotification;
+                let fiveMinuteNotification;
 
                 let estimateData = {};
 
@@ -269,6 +283,14 @@
                     }
                     if (duration < fiveMinsInMillis) {
                         message = "Get ready!";
+
+                        if (localStorage.getItem("fiveMinNotification") === "true") {
+                            if (!fiveMinuteNotification) {
+                                fiveMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than five minutes!");
+                            }
+                        }
+                    }else{
+                        fiveMinuteNotification = null;
                     }
                     $("#suggestionMessage").text(message);
                 }
@@ -392,6 +414,19 @@
                         });
                     } else {
                         localStorage.setItem("tenMinNotification", "false");
+                    }
+                });
+
+                $("#fiveMinNotificationSwitch").prop("checked", localStorage.getItem("fiveMinNotification") === "true");
+                $("#fiveMinNotificationSwitch").change(function () {
+                    let checked = $(this).is(":checked");
+                    if (checked) {
+                        Notification.requestPermission().then(function (result) {
+                            console.log(result);
+                            localStorage.setItem("fiveMinNotification", "true");
+                        });
+                    } else {
+                        localStorage.setItem("fiveMinNotification", "false");
                     }
                 });
 
