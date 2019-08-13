@@ -168,9 +168,9 @@
                         </div>
                         <br/>
                         <div class="row">
-                            <div class="input-field col s12">
-                                <input placeholder="Username" id="mc_username" type="text" class="validate" minlength="3" maxlength="16">
-                                <label for="mc_username">Minecraft Username</label>
+                            <div class="input-field col s12 m6">
+                                <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
+                                <label for="mcUsername">Minecraft Username</label>
                             </div>
                         </div>
                     </form>
@@ -370,101 +370,46 @@
                 ping();
                 setInterval(ping, 30000);
 
-
                 $("#waveBlazeBtn").click(function () {
                     let $this = $(this);
-                    confirmAndCaptchaAdd("a blaze wave", function (b) {
-                        if (b) {
-                            $this.attr("disabled", true);
-                            $.ajax({
-                                method: "POST",
-                                url: "add_event.php",
-                                data: {type: "blaze", captcha: reCaptchaToken}
-                            }).done(function () {
-                                // $this.css("display", "none");
-                                $this.attr("disabled", true);
-
-                                refreshEstimate()
-                            })
-                        }
-                    })
+                    doEventPost($this, "blaze", "a blaze wave", false);
                 });
-
                 $("#waveMagmaBtn").click(function () {
                     let $this = $(this);
-                    confirmAndCaptchaAdd("a magma wave", function (b) {
-                        if (b) {
-                            $this.attr("disabled", true);
-                            $.ajax({
-                                method: "POST",
-                                url: "add_event.php",
-                                data: {type: "magma", captcha: reCaptchaToken}
-                            }).done(function () {
-                                // $this.css("display", "none");
-                                $this.attr("disabled", true);
-
-                                refreshEstimate();
-                            })
-                        }
-                    })
+                    doEventPost($this, "magma", "a magma wave", false);
                 });
-
                 $("#musicBtn").click(function () {
                     let $this = $(this);
-                    confirmAndCaptchaAdd("music", function (b) {
-                        if (b) {
-                            $this.attr("disabled", true);
-                            $.ajax({
-                                method: "POST",
-                                url: "add_event.php",
-                                data: {type: "music", captcha: reCaptchaToken}
-                            }).done(function () {
-                                // $this.css("display", "none");
-                                $this.attr("disabled", true);
-
-                                refreshEstimate();
-                            })
-                        }
-                    })
+                    doEventPost($this, "music", "music", false);
                 });
-
                 $("#spawnedBtn").click(function () {
                     let $this = $(this);
-                    confirmAndCaptchaAdd("a boss spawn", function (b) {
-                        if (b) {
-                            $this.attr("disabled", true);
-                            $.ajax({
-                                method: "POST",
-                                url: "add_event.php",
-                                data: {type: "spawn", captcha: reCaptchaToken}
-                            }).done(function () {
-                                // $this.css("display", "none");
-                                $this.attr("disabled", true);
-
-                                // refreshEstimate();
-                            })
-                        }
-                    })
+                    doEventPost($this, "spawn", "a boss spawn", false);
                 });
-
                 $("#deathBtn").click(function () {
                     let $this = $(this);
-                    confirmAndCaptchaAdd("a boss death", function (b) {
+                    doEventPost($this, "death", "a boss death", true);
+                });
+
+                function doEventPost($this, event, eventDescription, skipEstimateRefresh) {
+                    let username = $("#mcUsername").val();
+                    confirmAndCaptchaAdd(eventDescription, function (b) {
                         if (b) {
                             $this.attr("disabled", true);
                             $.ajax({
                                 method: "POST",
                                 url: "add_event.php",
-                                data: {type: "death", captcha: reCaptchaToken}
+                                data: {type: event, captcha: reCaptchaToken, username: username}
                             }).done(function () {
                                 // $this.css("display", "none");
                                 $this.attr("disabled", true);
 
-                                // refreshEstimate();
+                                if (!skipEstimateRefresh)
+                                    refreshEstimate();
                             })
                         }
                     })
-                });
+                }
 
                 $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true");
                 $("#tenMinNotificationSwitch").change(function () {
