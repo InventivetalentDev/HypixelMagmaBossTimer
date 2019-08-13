@@ -46,6 +46,7 @@ if (isset($_POST["captcha"])) {
     die("invalid request");
 }
 
+$isMod = (isset($_POST["minecraftUser"]) && strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0)?1:0;
 
 if ($canContinue) {
     include_once "db_stuff.php";
@@ -107,10 +108,10 @@ if ($canContinue) {
     unset($stmt);
 
     // Insert new request
-    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName) VALUES(?,?,?,?)"))) {
+    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName,isMod) VALUES(?,?,?,?,?)"))) {
         die("unexpected sql error");
     }
-    $stmt->bind_param("ssss", $date, $type, $ip, $username);
+    $stmt->bind_param("ssssi", $date, $type, $ip, $username, $isMod);
     if (!$stmt->execute()) {
         die("unexpected sql error");
     }
