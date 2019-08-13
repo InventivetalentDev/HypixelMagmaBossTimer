@@ -12,7 +12,7 @@ if (!isset($_POST["type"])) {
     die("missing type");
 }
 $type = $_POST["type"];
-if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music") {
+if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music" && $type !== "death") {
     die("unknown event");
 }
 

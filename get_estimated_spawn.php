@@ -6,18 +6,20 @@
 include_once "common.php";
 include_once "db_stuff.php";
 
-$events = array("blaze", "magma", "music", "spawn");
+$events = array("blaze", "magma", "music", "spawn", "death");
 $event_times = array(
     "blaze" => array(),
     "magma" => array(),
     "music" => array(),
-    "spawn" => array()
+    "spawn" => array(),
+    "death" => array()
 );
 $event_confirmations = array(
     "blaze" => 0,
     "magma" => 0,
     "music" => 0,
-    "spawn" => 0
+    "spawn" => 0,
+    "death" => 0
 );
 
 $minConfirmations = 3;//TODO: make this relative to the amount of currently watching users
@@ -55,6 +57,7 @@ $lastSpawn = array_values($event_times["spawn"])[0];// ~2hrs
 $lastBlazeEvent = array_values($event_times["blaze"])[0];// ~20mins
 $lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
 $lastMusicEvent = array_values($event_times["music"])[0];// ~2mins
+$lastDeath = array_values($event_times["death"])[0];
 
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
@@ -101,7 +104,8 @@ echo json_encode(array(
         "spawn" => $lastSpawn,
         "blaze" => $lastBlazeEvent,
         "magma" => $lastMagmaEvent,
-        "music" => $lastMusicEvent
+        "music" => $lastMusicEvent,
+        "death" => $lastDeath
     ),
     "latestConfirmations" => $event_confirmations,
 ));

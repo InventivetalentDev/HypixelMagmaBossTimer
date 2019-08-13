@@ -111,6 +111,10 @@
                     <button disabled class="btn center-align track-btn red darken-4" id="spawnedBtn">
                         Magma Boss Spawned
                     </button>
+                    <br/>
+                    <button disabled class="btn center-align track-btn  green darken-3" id="deathBtn">
+                        Magma Boss Died
+                    </button>
                 </div>
             </div>
 
@@ -401,6 +405,25 @@
                                 method: "POST",
                                 url: "add_event.php",
                                 data: {type: "spawn", captcha: reCaptchaToken}
+                            }).done(function () {
+                                // $this.css("display", "none");
+                                $this.attr("disabled", true);
+
+                                // refreshEstimate();
+                            })
+                        }
+                    })
+                });
+
+                $("#deathBtn").click(function () {
+                    let $this = $(this);
+                    confirmAndCaptchaAdd("a boss death", function (b) {
+                        if (b) {
+                            $this.attr("disabled", true);
+                            $.ajax({
+                                method: "POST",
+                                url: "add_event.php",
+                                data: {type: "death", captcha: reCaptchaToken}
                             }).done(function () {
                                 // $this.css("display", "none");
                                 $this.attr("disabled", true);

@@ -9,7 +9,8 @@ $colorMap = array(
     "blaze" => "yellow",
     "magma" => "orange",
     "music" => "magenta",
-    "spawn" => "red"
+    "spawn" => "red",
+    "death" => "green"
 );
 
 $chartData = array();
