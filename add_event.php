@@ -72,6 +72,26 @@ if ($canContinue) {
     }
     unset($stmt);
 
+
+    // also check for overall requests without event type
+    if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC"))) {
+        die($conn->error);
+    }
+    $stmt->bind_param("s", $ip);
+    $stmt->execute();
+    $stmt->bind_result($lastTime);
+    if ($stmt->fetch()) {
+        $lastTime = strtotime($lastTime);
+        $stmt->close();
+        unset($stmt);
+        if ($time - $lastTime < 120) {
+            die("nope. too soon.");
+        }
+    } else {
+        $stmt->close();
+    }
+    unset($stmt);
+
     // Insert new request
     if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName) VALUES(?,?,?,?)"))) {
         die($conn->error);
