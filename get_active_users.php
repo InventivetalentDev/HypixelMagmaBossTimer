@@ -6,9 +6,11 @@
 
 include_once "db_stuff.php";
 
-$stmt = $conn->prepare("SELECT ip,time FROM hypixel_skyblock_magma_timer_pings WHERE time > NOW() - INTERVAL 2 MINUTE");
+//TODO: make this return some more detailed info (currently active users, users who have it open in the background, total unique users, etc.)
+
+$stmt = $conn->prepare("SELECT ip,time,active_time FROM hypixel_skyblock_magma_timer_pings WHERE active_time > NOW() - INTERVAL 2 MINUTE");
 $stmt->execute();
-$stmt->bind_result($ip, $time);
+$stmt->bind_result($ip, $time, $activeTime);
 $c=0;
 while ($row = $stmt->fetch()) {
 $c++;

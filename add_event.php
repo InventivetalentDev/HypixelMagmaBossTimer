@@ -22,7 +22,7 @@ $username = isset($_POST["username"]) ? $_POST["username"] : "";
 //    die("missing captcha");
 //}
 
-$confirmationCheckFactor = 90;
+$confirmationCheckFactor = 100;
 
 //die("*sigh* I said don't abuse plz :(");
 
@@ -66,7 +66,7 @@ if ($canContinue) {
         unset($stmt);
         if ($time - $lastTime < 3600) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
-            $stmt->bind_param("ssis", $ip, $date, $date);
+            $stmt->bind_param("sss", $ip, $date, $date);
             $stmt->execute();
             $stmt->close();
             unset($stmt);

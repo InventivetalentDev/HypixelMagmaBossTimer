@@ -22,7 +22,7 @@ function checkCaptcha($response)
 function curl_post($url, $fields)
 {
 
-
+    $fields_string = "";
 //url-ify the data for the POST
     foreach ($fields as $key => $value) {
         $fields_string .= $key . '=' . $value . '&';

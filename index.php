@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>Hypixel Skyblock Magma Boss Timer</title>
-        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css" integrity="sha256-AaQqnjfGDRZd/lUp0Dvy7URGOyRsh8g9JdWUkyYxNfI=" crossorigin="anonymous"/>
@@ -264,7 +264,7 @@
                     $("#time").text(formattedTimer);
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
 
-                    if(now%2000===0) {
+                    if (now % 2 === 0) {
                         if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                             $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
                             $("#waveBlazeBtn").attr("data-tooltip", estimateData.latestConfirmations.blaze + " Confirmations");
@@ -299,11 +299,10 @@
                         }
 
                         // update tooltips
-                        // $('.track-btn.tooltipped').tooltip({
-                        //     position: "left"
-                        // });
+                        $('.track-btn.tooltipped').tooltip({
+                            position: "left"
+                        });
                     }
-
 
 
                     let message = "";
