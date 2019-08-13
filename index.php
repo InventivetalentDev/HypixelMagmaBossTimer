@@ -96,24 +96,24 @@
                 <div class="row center-align">
                     <strong>NOTE: Please click the buttons below <i>only</i> if the events actually occurred!</strong><br/>
                     <span>They will update the timer for <b>everyone</b>!</span><br/>
-                    <button disabled class="btn center-align track-btn amber" id="waveBlazeBtn">
+                    <button disabled class="btn tooltipped center-align track-btn amber" id="waveBlazeBtn" data-tooltip="Not confirmed">
                         Blaze Wave Spawned <span id="waveBlazeTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn center-align track-btn deep-orange" id="waveMagmaBtn">
+                    <button disabled class="btn tooltipped center-align track-btn deep-orange" id="waveMagmaBtn" data-tooltip="Not confirmed">
                         Magma Wave Spawned <span id="waveMagmaTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn center-align track-btn purple darken-3" id="musicBtn">
+                    <button disabled class="btn tooltipped center-align track-btn purple darken-3" id="musicBtn" data-tooltip="Not confirmed">
                         Mysterious Music Playing <span id="musicTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn center-align track-btn red darken-4" id="spawnedBtn">
-                        Magma Boss Spawned
+                    <button disabled class="btn tooltipped center-align track-btn red darken-4" id="spawnedBtn" data-tooltip="Not confirmed">
+                        Magma Boss Spawned <span id="spawnTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn center-align track-btn  green darken-3" id="deathBtn">
-                        Magma Boss Died
+                    <button disabled class="btn tooltipped center-align track-btn  green darken-3" id="deathBtn" data-tooltip="Not confirmed">
+                        Magma Boss Died <span id="deathTime"></span>
                     </button>
                 </div>
             </div>
@@ -219,7 +219,10 @@
                     onOpenEnd: function () {
                         makeTimelineChart();
                     }
-                })
+                });
+                $('.track-btn.tooltipped').tooltip({
+                    position: "left"
+                });
 
                 let reCaptchaToken = null;
                 grecaptcha.ready(function () {
@@ -260,24 +263,46 @@
                     $("#time").text(formattedTimer);
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
 
-                    if (now - estimateData.latest.blaze < twentyMinsInMillis) {
-                        $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
-                        // $("#waveBlazeBtn").attr("disabled", true);
-                    } else {
-                        $("#waveBlazeTime").text("");
+                    if(now%2000===0) {
+                        if (now - estimateData.latest.blaze < twentyMinsInMillis) {
+                            $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
+                            $("#waveBlazeBtn").attr("data-tooltip", estimateData.latestConfirmations.blaze + " Confirmations");
+                            // $("#waveBlazeBtn").attr("disabled", true);
+                        } else {
+                            $("#waveBlazeTime").text("");
+                            $("#waveBlazeBtn").attr("data-tooltip", "Not Confirmed")
+                        }
+                        if (now - estimateData.latest.magma < tenMinsInMillis) {
+                            $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
+                            $("#waveMagmaBtn").attr("data-tooltip", estimateData.latestConfirmations.magma + " Confirmations");
+                            // $("#waveMagmaBtn").attr("disabled", true);
+                        } else {
+                            $("#waveMagmaTime").text("");
+                            $("#waveMagmaBtn").attr("data-tooltip", "Not Confirmed")
+                        }
+                        if (now - estimateData.latest.music < fiveMinsInMillis) {
+                            $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
+                            $("#musicBtn").attr("data-tooltip", estimateData.latestConfirmations.music + " Confirmations");
+                            // $("#musicBtn").attr("disabled", true);
+                        } else {
+                            $("#musicTime").text("");
+                            $("#musicBtn").attr("data-tooltip", "Not Confirmed")
+                        }
+                        if (now - estimateData.latest.spawn < fiveMinsInMillis) {
+                            $("#spawnTime").text("(" + moment(estimateData.latest.spawn).fromNow() + ")");
+                            $("#spawnedBtn").attr("data-tooltip", estimateData.latestConfirmations.spawn + " Confirmations");
+                            // $("#musicBtn").attr("disabled", true);
+                        } else {
+                            $("#spawnTime").text("");
+                            $("#spawnedBtn").attr("data-tooltip", "Not Confirmed")
+                        }
+
+                        // update tooltips
+                        // $('.track-btn.tooltipped').tooltip({
+                        //     position: "left"
+                        // });
                     }
-                    if (now - estimateData.latest.magma < tenMinsInMillis) {
-                        $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
-                        // $("#waveMagmaBtn").attr("disabled", true);
-                    } else {
-                        $("#waveMagmaTime").text("");
-                    }
-                    if (now - estimateData.latest.music < fiveMinsInMillis) {
-                        $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
-                        // $("#musicBtn").attr("disabled", true);
-                    } else {
-                        $("#musicTime").text("");
-                    }
+
 
 
                     let message = "";
