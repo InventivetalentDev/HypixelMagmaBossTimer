@@ -437,6 +437,10 @@
                     }
                 });
 
+                $("#mcUsername").val(localStorage.getItem("mcUsername") || "");
+                $("#mcUsername").on("change",function () {
+                    localStorage.setItem("mcUsername", $(this).val());
+                });
 
                 function makeTimelineChart() {
                     $.ajax("history_chart.php?hours=" + historyHours).done(function (data) {
