@@ -362,7 +362,8 @@
                         method: "POST",
                         url: "ping.php",
                         data: {
-                            lastFocused: Math.floor(lastFocused)
+                            lastFocused: Math.floor(lastFocused),
+                            minecraftUser: $("#mcUsername").val()
                         }
                     })
                 }

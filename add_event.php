@@ -46,7 +46,7 @@ if (isset($_POST["captcha"])) {
     die("invalid request");
 }
 
-$isMod = (isset($_POST["minecraftUser"]) && strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0)?1:0;
+$isMod = (isset($_POST["minecraftUser"]) && strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0) ? 1 : 0;
 
 if ($canContinue) {
     include_once "db_stuff.php";
@@ -153,10 +153,10 @@ if ($canContinue) {
 
 
     } else {
-        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,confirmations,time_average) VALUES(?,?,?,?)"))) {
+        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average) VALUES(?,?,?)"))) {
             die("unexpected sql error");
         }
-        $stmt->bind_param("ssis", $type, $roundedDate, $confirmations, $date);
+        $stmt->bind_param("sss", $type, $roundedDate, $date);
         $stmt->execute();
         $stmt->close();
         unset($stmt);
