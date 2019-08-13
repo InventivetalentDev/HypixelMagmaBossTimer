@@ -90,7 +90,9 @@ if ($canContinue) {
         $lastTime = strtotime($lastTime);
         $stmt->close();
         unset($stmt);
-        if ($time - $lastTime < 120) {
+
+        // allow for less time when reporting death after spawn
+        if ($time - $lastTime < $type==="death"?30:120) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
             $stmt->bind_param("sss", $ip, $date, $date);
             $stmt->execute();
