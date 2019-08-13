@@ -55,7 +55,7 @@ if ($canContinue) {
 
     // Check last time
     if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC"))) {
-        die($conn->error);
+        die("unexpected sql error");
     }
     $stmt->bind_param("ss", $type, $ip);
     $stmt->execute();
@@ -81,7 +81,7 @@ if ($canContinue) {
 
     // also check for overall requests without event type
     if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC"))) {
-        die($conn->error);
+        die("unexpected sql error");
     }
     $stmt->bind_param("s", $ip);
     $stmt->execute();
@@ -106,11 +106,11 @@ if ($canContinue) {
 
     // Insert new request
     if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName) VALUES(?,?,?,?)"))) {
-        die($conn->error);
+        die("unexpected sql error");
     }
     $stmt->bind_param("ssss", $date, $type, $ip, $username);
     if (!$stmt->execute()) {
-        die($conn->error);
+        die("unexpected sql error");
     }
     $stmt->close();
     unset($stmt);
@@ -121,7 +121,9 @@ if ($canContinue) {
     $roundedDate = date("Y-m-d H:i:s", $roundedTime);
     $confirmations = 1;
 
-    $stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC");
+    if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC"))) {
+        die("unexpected sql error");
+    }
     $stmt->bind_param("ss", $type, $roundedDate);
     $stmt->execute();
     $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
@@ -138,7 +140,9 @@ if ($canContinue) {
         $confirmations += 1;
         $averageDate = date("Y-m-d H:i:s", $averageTime);
 
-        $stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?");
+        if (!($stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?"))) {
+            die("unexpected sql error");
+        }
         $stmt->bind_param("isss", $confirmations, $averageDate, $type, $roundedDate);
         $stmt->execute();
         $stmt->close();
@@ -146,7 +150,9 @@ if ($canContinue) {
 
 
     } else {
-        $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,confirmations,time_average) VALUES(?,?,?,?)");
+        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,confirmations,time_average) VALUES(?,?,?,?)"))) {
+            die("unexpected sql error");
+        }
         $stmt->bind_param("ssis", $type, $roundedDate, $confirmations, $date);
         $stmt->execute();
         $stmt->close();

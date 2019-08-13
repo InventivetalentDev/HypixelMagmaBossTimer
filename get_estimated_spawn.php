@@ -25,7 +25,9 @@ $event_confirmations = array(
 $minConfirmations = 3;//TODO: make this relative to the amount of currently watching users
 
 
-$stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC");
+if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC"))) {
+    die("unexpected sql error");
+}
 $stmt->bind_param("i", $minConfirmations);
 $stmt->execute();
 $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
@@ -105,7 +107,7 @@ echo json_encode(array(
         "fromBlaze" => $estimateFromBlaze,
         "fromMagma" => $estimateFromMagma,
         "fromMusic" => $estimateFromMusic,
-        "fromDeath"=>$estimateFromDeath
+        "fromDeath" => $estimateFromDeath
     ),
     "latest" => array(
         "spawn" => $lastSpawn,
