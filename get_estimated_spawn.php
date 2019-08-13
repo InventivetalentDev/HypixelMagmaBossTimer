@@ -22,7 +22,7 @@ $event_confirmations = array(
     "death" => 0
 );
 
-$minConfirmations = 3;//TODO: make this relative to the amount of currently watching users
+$minConfirmations = 5;//TODO: make this relative to the amount of currently watching users
 
 
 if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC"))) {
