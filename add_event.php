@@ -80,19 +80,19 @@ if ($canContinue) {
 
 
     // also check for overall requests without event type
-    if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC"))) {
+    if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC"))) {
         die("unexpected sql error");
     }
     $stmt->bind_param("s", $ip);
     $stmt->execute();
-    $stmt->bind_result($lastTime);
+    $stmt->bind_result($lastTime, $lastType);
     if ($stmt->fetch()) {
         $lastTime = strtotime($lastTime);
         $stmt->close();
         unset($stmt);
 
         // allow for less time when reporting death after spawn
-        if ($time - $lastTime < $type==="death"?30:120) {
+        if ($time - $lastTime < ($type === "death" && $lastType === "spawn" ? 20 : 120)) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
             $stmt->bind_param("sss", $ip, $date, $date);
             $stmt->execute();
