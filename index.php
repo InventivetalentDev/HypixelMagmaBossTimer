@@ -166,6 +166,13 @@
                                 </div>
                             </div>
                         </div>
+                        <br/>
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input placeholder="Username" id="mc_username" type="text" class="validate" minlength="3" maxlength="16">
+                                <label for="mc_username">Minecraft Username</label>
+                            </div>
+                        </div>
                     </form>
                 </div>
 
