@@ -65,6 +65,12 @@ if ($canContinue) {
         $stmt->close();
         unset($stmt);
         if ($time - $lastTime < 3600) {
+            $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
+            $stmt->bind_param("ssis", $ip, $date, $date);
+            $stmt->execute();
+            $stmt->close();
+            unset($stmt);
+
             die("nope. too soon.");
         }
     } else {
@@ -85,6 +91,12 @@ if ($canContinue) {
         $stmt->close();
         unset($stmt);
         if ($time - $lastTime < 120) {
+            $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
+            $stmt->bind_param("sss", $ip, $date, $date);
+            $stmt->execute();
+            $stmt->close();
+            unset($stmt);
+
             die("nope. too soon.");
         }
     } else {
