@@ -66,6 +66,12 @@ $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
 
+if ($lastDeath > $lastSpawn) {
+    $estimate = $lastDeath + (($estSpawnsSinceLast * $twoHoursInMillis));
+    $estimateFromDeath = $estimate;
+    $estimateSource = "death";
+}
+
 
 if ($lastBlazeEvent > $lastSpawn && $now - $lastBlazeEvent < $twentyMinsInMillis) {
     $estimate = $lastBlazeEvent + $twentyMinsInMillis;
@@ -98,7 +104,8 @@ echo json_encode(array(
         "fromSpawn" => $estimateFromSpawn,
         "fromBlaze" => $estimateFromBlaze,
         "fromMagma" => $estimateFromMagma,
-        "fromMusic" => $estimateFromMusic
+        "fromMusic" => $estimateFromMusic,
+        "fromDeath"=>$estimateFromDeath
     ),
     "latest" => array(
         "spawn" => $lastSpawn,
