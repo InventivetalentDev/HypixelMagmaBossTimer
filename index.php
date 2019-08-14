@@ -152,8 +152,6 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="input-field col s12 m6">
                                 <span>5 Minute Notification</span>
                                 <div class="switch">
@@ -165,10 +163,10 @@
                                     </label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-field col s12 m6">
-                            <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
-                            <label for="mcUsername">Minecraft Username</label>
+                            <div class="input-field col s12 m6">
+                                <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
+                                <label for="mcUsername">Minecraft Username</label>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -266,8 +264,8 @@
 
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
 
-                    let deathMoreRecent= estimateData.latest.death>estimateData.latest.spawn;
-                    let latestThing =deathMoreRecent?estimateData.latest.death:estimateData.latest.spawn;
+                    let deathMoreRecent = estimateData.latest.death > estimateData.latest.spawn;
+                    let latestThing = deathMoreRecent ? estimateData.latest.death : estimateData.latest.spawn;
                     $("#lastTrackedType").text(deathMoreRecent ? "death" : "spawn");
                     $("#lastTrackedTime").html(moment(latestThing).fromNow() + "<br/> (" + moment(latestThing).format('MMMM Do YYYY, h:mm:ss a') + ")" + ((hoursSinceLastSpawn > 5 && hoursSinceLastDeath > 5) ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
