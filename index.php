@@ -263,15 +263,15 @@
                 function updateTimer() {
                     now = Date.now();
 
-                    let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).hours();
-                    let hoursSinceLastDeath = moment.duration(now - estimateData.latest.death).hours();
+                    let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).asHours();
+                    let hoursSinceLastDeath = moment.duration(now - estimateData.latest.death).asHours();
 
-                    let minutesUntilNextSpawn = moment.duration(estimateData.estimate - now).minutes();
-                    let minutesSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).minutes();
+                    let minutesUntilNextSpawn = moment.duration(estimateData.estimate - now).asMinutes();
+                    let minutesSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).asMinutes();
 
-                    let minutesSinceLastBlaze = moment.duration(now - estimateData.latest.blaze).minutes();
-                    let minutesSinceLastMagma = moment.duration(now - estimateData.latest.magma).minutes();
-                    let minutesSinceLastMusic = moment.duration(now - estimateData.latest.music).minutes();
+                    let minutesSinceLastBlaze = moment.duration(now - estimateData.latest.blaze).asMinutes();
+                    let minutesSinceLastMagma = moment.duration(now - estimateData.latest.magma).asMinutes();
+                    let minutesSinceLastMusic = moment.duration(now - estimateData.latest.music).asMinutes();
 
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
 
@@ -364,9 +364,9 @@
                             position: "left"
                         });
 
-                        if($('.track-btn:visible').length) {
+                        if ($('.track-btn:visible').length) {
                             $("#buttonNote").show()
-                        }else{
+                        } else {
                             $("#buttonNote").hide();
                         }
                     }
