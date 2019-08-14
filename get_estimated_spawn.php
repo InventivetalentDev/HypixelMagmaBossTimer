@@ -68,6 +68,7 @@ $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
 
+$estimateFromDeath = 0;
 if ($lastDeath > $lastSpawn) {
     $estSpawnsSinceLast = floor(($now - $lastDeath) / $twoHoursInMillis);
     $estSpawnsSinceLast += 1;// add the last known spawn
