@@ -95,8 +95,10 @@
                 <br/>
 
                 <div class="row center-align">
-                    <strong>NOTE: Please click the buttons below <i>only</i> if the events actually occurred!</strong><br/>
-                    <span>They will update the timer for <b>everyone</b>!</span><br/>
+                    <div id="buttonNote" style="display:none;">
+                        <strong>NOTE: Please click the buttons below <i>only</i> if the events actually occurred!</strong><br/>
+                        <span>They will update the timer for <b>everyone</b>!</span><br/>
+                    </div>
                     <button disabled class="btn tooltipped center-align track-btn amber" id="waveBlazeBtn" data-tooltip="Not confirmed" style="display: none;">
                         Blaze Wave Spawned <span id="waveBlazeTime"></span>
                     </button>
@@ -329,7 +331,7 @@
                             $("#musicBtn").attr("data-tooltip", "Not Confirmed");
                         }
 
-                        if (minutesUntilNextSpawn > 5&& minutesSinceLastSpawn > 1) {
+                        if (minutesUntilNextSpawn > 5 && minutesSinceLastSpawn > 1) {
                             $("#spawnedBtn").hide();
                         } else {
                             $("#spawnedBtn").show();
@@ -361,6 +363,12 @@
                         $('.track-btn.tooltipped').tooltip({
                             position: "left"
                         });
+
+                        if($('.track-btn:visible').length) {
+                            $("#buttonNote").show()
+                        }else{
+                            $("#buttonNote").hide();
+                        }
                     }
 
 
