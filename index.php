@@ -18,7 +18,7 @@
                 background-color: rgb(55, 40, 47);
             }
 
-            body {
+            body, input {
                 color: #e9e9e9;
             }
 
