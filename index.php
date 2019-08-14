@@ -281,8 +281,12 @@
                     $("#lastTrackedTime").html(moment(latestThing).fromNow() + "<br/> (" + moment(latestThing).format('MMMM Do YYYY, h:mm:ss a') + ")" + ((hoursSinceLastSpawn > 5 && hoursSinceLastDeath > 5) ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
                     let duration = estimateData.estimate - now;
-                    let formattedTimer = moment.utc(duration).format("HH:mm:ss");
-                    $("#time").text(formattedTimer);
+                    if(duration>0) {
+                        let formattedTimer = moment.utc(duration).format("HH:mm:ss");
+                        $("#time").text(formattedTimer);
+                    }else{
+                        $("#time").text("NOW");
+                    }
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
 
                     if (now % 2 === 0) {
