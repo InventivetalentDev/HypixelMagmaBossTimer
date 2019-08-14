@@ -97,23 +97,23 @@
                 <div class="row center-align">
                     <strong>NOTE: Please click the buttons below <i>only</i> if the events actually occurred!</strong><br/>
                     <span>They will update the timer for <b>everyone</b>!</span><br/>
-                    <button disabled class="btn tooltipped center-align track-btn amber" id="waveBlazeBtn" data-tooltip="Not confirmed">
+                    <button disabled class="btn tooltipped center-align track-btn amber" id="waveBlazeBtn" data-tooltip="Not confirmed" style="display: none;">
                         Blaze Wave Spawned <span id="waveBlazeTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn tooltipped center-align track-btn deep-orange" id="waveMagmaBtn" data-tooltip="Not confirmed">
+                    <button disabled class="btn tooltipped center-align track-btn deep-orange" id="waveMagmaBtn" data-tooltip="Not confirmed" style="display: none;">
                         Magma Wave Spawned <span id="waveMagmaTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn tooltipped center-align track-btn purple darken-3" id="musicBtn" data-tooltip="Not confirmed">
+                    <button disabled class="btn tooltipped center-align track-btn purple darken-3" id="musicBtn" data-tooltip="Not confirmed" style="display: none;">
                         Mysterious Music Playing <span id="musicTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn tooltipped center-align track-btn red darken-4" id="spawnedBtn" data-tooltip="Not confirmed">
+                    <button disabled class="btn tooltipped center-align track-btn red darken-4" id="spawnedBtn" data-tooltip="Not confirmed" style="display: none;">
                         Magma Boss Spawned <span id="spawnTime"></span>
                     </button>
                     <br/>
-                    <button disabled class="btn tooltipped center-align track-btn  green darken-3" id="deathBtn" data-tooltip="Not confirmed">
+                    <button disabled class="btn tooltipped center-align track-btn  green darken-3" id="deathBtn" data-tooltip="Not confirmed" style="display: none;">
                         Magma Boss Died <span id="deathTime"></span>
                     </button>
                 </div>
@@ -264,6 +264,8 @@
                     let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).hours();
                     let hoursSinceLastDeath = moment.duration(now - estimateData.latest.death).hours();
 
+                    let minutesUntilNextSpawn = moment.duration(estimateData.estimate - now).minutes();
+
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
 
                     let deathMoreRecent = estimateData.latest.death > estimateData.latest.spawn;
@@ -277,13 +279,24 @@
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
 
                     if (now % 2 === 0) {
+                        if (minutesUntilNextSpawn > 30) {
+                            $("#waveBlazeBtn").hide();
+                        }else{
+                            $("#waveBlazeBtn").show();
+                        }
                         if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                             $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
                             $("#waveBlazeBtn").attr("data-tooltip", estimateData.latestConfirmations.blaze + " Confirmations");
                             // $("#waveBlazeBtn").attr("disabled", true);
                         } else {
                             $("#waveBlazeTime").text("");
-                            $("#waveBlazeBtn").attr("data-tooltip", "Not Confirmed")
+                            $("#waveBlazeBtn").attr("data-tooltip", "Not Confirmed");
+                        }
+
+                        if(minutesUntilNextSpawn>20){
+                            $("#waveMagmaBtn").hide();
+                        }else{
+                            $("#waveMagmaBtn").show();
                         }
                         if (now - estimateData.latest.magma < tenMinsInMillis) {
                             $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
@@ -293,13 +306,25 @@
                             $("#waveMagmaTime").text("");
                             $("#waveMagmaBtn").attr("data-tooltip", "Not Confirmed")
                         }
+
+                        if (minutesUntilNextSpawn > 10) {
+                            $("#musicBtn").hide();
+                        }else{
+                            $("#musicBtn").show();
+                        }
                         if (now - estimateData.latest.music < fiveMinsInMillis) {
                             $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
                             $("#musicBtn").attr("data-tooltip", estimateData.latestConfirmations.music + " Confirmations");
                             // $("#musicBtn").attr("disabled", true);
                         } else {
                             $("#musicTime").text("");
-                            $("#musicBtn").attr("data-tooltip", "Not Confirmed")
+                            $("#musicBtn").attr("data-tooltip", "Not Confirmed");
+                        }
+
+                        if(minutesUntilNextSpawn>10){
+                            $("#spawnedBtn").hide();
+                        }else{
+                            $("#spawnedBtn").show();
                         }
                         if (now - estimateData.latest.spawn < fiveMinsInMillis) {
                             $("#spawnTime").text("(" + moment(estimateData.latest.spawn).fromNow() + ")");
@@ -308,6 +333,20 @@
                         } else {
                             $("#spawnTime").text("");
                             $("#spawnedBtn").attr("data-tooltip", "Not Confirmed")
+                        }
+
+                        if(minutesUntilNextSpawn>5){
+                            $("#deathBtn").hide();
+                        }else{
+                            $("#deathBtn").show();
+                        }
+                        if (now - estimateData.latest.death < fiveMinsInMillis) {
+                            $("#deathTime").text("(" + moment(estimateData.latest.death).fromNow() + ")");
+                            $("#deathBtn").attr("data-tooltip", estimateData.latestConfirmations.death + " Confirmations");
+                            // $("#musicBtn").attr("disabled", true);
+                        } else {
+                            $("#deathTime").text("");
+                            $("#deathBtn").attr("data-tooltip", "Not Confirmed")
                         }
 
                         // update tooltips
