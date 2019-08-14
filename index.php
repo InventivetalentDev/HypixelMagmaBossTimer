@@ -141,7 +141,7 @@
                 <div class="row">
                     <form class="col s12">
                         <div class="row">
-                            <div class="input-field col s12">
+                            <div class="input-field col s12 m6">
                                 <span>10 Minute Notification</span>
                                 <div class="switch">
                                     <label>
@@ -154,7 +154,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="input-field col s12">
+                            <div class="input-field col s12 m6">
                                 <span>5 Minute Notification</span>
                                 <div class="switch">
                                     <label>
@@ -166,12 +166,9 @@
                                 </div>
                             </div>
                         </div>
-                        <br/>
-                        <div class="row">
-                            <div class="input-field col s12 m6">
-                                <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
-                                <label for="mcUsername">Minecraft Username</label>
-                            </div>
+                        <div class="input-field col s12 m6">
+                            <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
+                            <label for="mcUsername">Minecraft Username</label>
                         </div>
                     </form>
                 </div>
