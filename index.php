@@ -88,7 +88,7 @@
                     <h4 class="center-align" id="suggestionMessage"></h4>
                     <br/>
                     <br/>
-                    <span>Last tracked spawn was <span id="lastTrackedSpawn"></span></span>
+                    <span>Last tracked <span id="lastTrackedType">spawn</span> was <span id="lastTrackedTime"></span></span>
                 </div>
 
                 <br/>
@@ -265,9 +265,14 @@
                     now = Date.now();
 
                     let hoursSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).hours();
+                    let hoursSinceLastDeath = moment.duration(now - estimateData.latest.death).hours();
 
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
-                    $("#lastTrackedSpawn").html(moment(estimateData.latest.spawn).fromNow() + "<br/> (" + moment(estimateData.latest.spawn).format('MMMM Do YYYY, h:mm:ss a') + ")" + (hoursSinceLastSpawn > 5 ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
+
+                    let deathMoreRecent= estimateData.latest.death>estimateData.latest.spawn;
+                    let latestThing =deathMoreRecent?estimateData.latest.death:estimateData.latest.spawn;
+                    $("#lastTrackedType").text(deathMoreRecent ? "death" : "spawn");
+                    $("#lastTrackedTime").html(moment(latestThing).fromNow() + "<br/> (" + moment(latestThing).format('MMMM Do YYYY, h:mm:ss a') + ")" + ((hoursSinceLastSpawn > 5 && hoursSinceLastDeath > 5) ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
                     let duration = estimateData.estimate - now;
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
