@@ -258,6 +258,9 @@
                 let historyHours = 4;
                 let lastFocused = now / 1000;
 
+                let ipv4 = "";
+                let ipv6 = "";
+
                 function updateTimer() {
                     now = Date.now();
 
@@ -363,7 +366,9 @@
                         url: "ping.php",
                         data: {
                             lastFocused: Math.floor(lastFocused),
-                            minecraftUser: $("#mcUsername").val()
+                            minecraftUser: $("#mcUsername").val(),
+                            ipv4: ipv4,
+                            ipv6: ipv6
                         }
                     })
                 }
@@ -400,7 +405,13 @@
                             $.ajax({
                                 method: "POST",
                                 url: "add_event.php",
-                                data: {type: event, captcha: reCaptchaToken, username: username}
+                                data: {
+                                    type: event,
+                                    captcha: reCaptchaToken,
+                                    username: username,
+                                    ipv4: ipv4,
+                                    ipv6: ipv6
+                                }
                             }).done(function () {
                                 // $this.css("display", "none");
                                 $this.attr("disabled", true);
@@ -439,7 +450,7 @@
                 });
 
                 $("#mcUsername").val(localStorage.getItem("mcUsername") || "");
-                $("#mcUsername").on("change",function () {
+                $("#mcUsername").on("change", function () {
                     localStorage.setItem("mcUsername", $(this).val());
                 });
 
@@ -506,6 +517,15 @@
 
                 $(window).on("focus blur", function () {
                     lastFocused = Date.now() / 1000;
+                });
+
+                $.getJSON("https://api.ipify.org?format=jsonp&callback=?", function (json) {
+                    ipv4 = json.ip;
+                    console.log("IPv4: " + ipv4);
+                });
+                $.getJSON("https://api6.ipify.org?format=jsonp&callback=?", function (json) {
+                    ipv6 = json.ip;
+                    console.log("IPv6: " + ipv6);
                 });
 
                 function showNotification(body, title) {
