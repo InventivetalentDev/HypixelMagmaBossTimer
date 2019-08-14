@@ -25,7 +25,7 @@ $event_confirmations = array(
 $minConfirmations = 6;//TODO: make this relative to the amount of currently watching users
 
 
-if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC"))) {
+if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
     die("unexpected sql error");
 }
 $stmt->bind_param("i", $minConfirmations);
