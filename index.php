@@ -265,6 +265,11 @@
                     let hoursSinceLastDeath = moment.duration(now - estimateData.latest.death).hours();
 
                     let minutesUntilNextSpawn = moment.duration(estimateData.estimate - now).minutes();
+                    let minutesSinceLastSpawn = moment.duration(now - estimateData.latest.spawn).minutes();
+
+                    let minutesSinceLastBlaze = moment.duration(now - estimateData.latest.blaze).minutes();
+                    let minutesSinceLastMagma = moment.duration(now - estimateData.latest.magma).minutes();
+                    let minutesSinceLastMusic = moment.duration(now - estimateData.latest.music).minutes();
 
                     $("#nextTime").text("(" + moment(estimateData.estimate).format('MMMM Do YYYY, h:mm:ss a') + ")");
 
@@ -281,9 +286,10 @@
                     if (now % 2 === 0) {
                         if (minutesUntilNextSpawn > 30) {
                             $("#waveBlazeBtn").hide();
-                        }else{
+                        } else {
                             $("#waveBlazeBtn").show();
                         }
+                        $("#waveBlazeBtn").attr("disabled", minutesSinceLastBlaze < 30 && minutesSinceLastBlaze > 5);
                         if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                             $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
                             $("#waveBlazeBtn").attr("data-tooltip", estimateData.latestConfirmations.blaze + " Confirmations");
@@ -293,11 +299,12 @@
                             $("#waveBlazeBtn").attr("data-tooltip", "Not Confirmed");
                         }
 
-                        if(minutesUntilNextSpawn>20){
+                        if (minutesUntilNextSpawn > 20) {
                             $("#waveMagmaBtn").hide();
-                        }else{
+                        } else {
                             $("#waveMagmaBtn").show();
                         }
+                        $("#waveMagmaBtn").attr("disabled", minutesSinceLastMagma < 30 && minutesSinceLastMagma > 5);
                         if (now - estimateData.latest.magma < tenMinsInMillis) {
                             $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
                             $("#waveMagmaBtn").attr("data-tooltip", estimateData.latestConfirmations.magma + " Confirmations");
@@ -309,9 +316,10 @@
 
                         if (minutesUntilNextSpawn > 10) {
                             $("#musicBtn").hide();
-                        }else{
+                        } else {
                             $("#musicBtn").show();
                         }
+                        $("#musicBtn").attr("disabled", minutesSinceLastMusic < 30 && minutesSinceLastMusic > 5);
                         if (now - estimateData.latest.music < fiveMinsInMillis) {
                             $("#musicTime").text("(" + moment(estimateData.latest.music).fromNow() + ")");
                             $("#musicBtn").attr("data-tooltip", estimateData.latestConfirmations.music + " Confirmations");
@@ -321,9 +329,9 @@
                             $("#musicBtn").attr("data-tooltip", "Not Confirmed");
                         }
 
-                        if(minutesUntilNextSpawn>10){
+                        if (minutesUntilNextSpawn > 5&& minutesSinceLastSpawn > 1) {
                             $("#spawnedBtn").hide();
-                        }else{
+                        } else {
                             $("#spawnedBtn").show();
                         }
                         if (now - estimateData.latest.spawn < fiveMinsInMillis) {
@@ -335,9 +343,9 @@
                             $("#spawnedBtn").attr("data-tooltip", "Not Confirmed")
                         }
 
-                        if(minutesUntilNextSpawn>5){
+                        if (minutesUntilNextSpawn > 2 && minutesSinceLastSpawn > 5) {
                             $("#deathBtn").hide();
-                        }else{
+                        } else {
                             $("#deathBtn").show();
                         }
                         if (now - estimateData.latest.death < fiveMinsInMillis) {
