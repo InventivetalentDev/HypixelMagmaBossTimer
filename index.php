@@ -81,7 +81,7 @@
 
             <div class="center-align">
                 <div class="row center-align">
-                    <h5 class="center-align">The Magma Boss should spawn in about</h5>
+                    <h5 class="center-align" id="timerText">The Magma Boss should spawn in about</h5>
                     <h1 class="center-align" id="time">00:00:00</h1>
                     <span id="nextTime"></span>
                     <br/>
@@ -284,8 +284,10 @@
                     if(duration>0) {
                         let formattedTimer = moment.utc(duration).format("HH:mm:ss");
                         $("#time").text(formattedTimer);
+                        $("#timerText").text("The Magma Boss should spawn in about");
                     }else{
                         $("#time").text("NOW");
+                        $("#timerText").text("The Magma Boss should spawn");
                     }
                     $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
 
