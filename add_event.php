@@ -22,7 +22,7 @@ $username = isset($_POST["username"]) ? $_POST["username"] : "";
 //    die("missing captcha");
 //}
 
-$confirmationCheckFactor = 100;
+$confirmationCheckFactor = 120;
 
 //die("*sigh* I said don't abuse plz :(");
 
