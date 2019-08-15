@@ -143,10 +143,10 @@ if ($canContinue) {
         $confirmations += 1;
         $averageDate = date("Y-m-d H:i:s", $averageTime);
 
-        if (!($stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=confirmations+1, time_average=? WHERE type=? AND time_rounded=?"))) {
+        if (!($stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?"))) {
             die("unexpected sql error");
         }
-        $stmt->bind_param("sss", $averageDate, $type, $roundedDate);
+        $stmt->bind_param("isss", $confirmations, $averageDate, $type, $roundedDate);
         $stmt->execute();
         $stmt->close();
         unset($stmt);
