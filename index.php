@@ -282,10 +282,10 @@
 
                     let duration = estimateData.estimate - now;
                     let formattedTimer = moment.utc(duration).format("HH:mm:ss");
-                    if(duration>0) {
+                    if (duration > 0) {
                         $("#time").text(formattedTimer);
                         $("#timerText").text("The Magma Boss should spawn in about");
-                    }else{
+                    } else {
                         $("#time").text("NOW");
                         $("#timerText").text("The Magma Boss should spawn");
                     }
@@ -548,6 +548,14 @@
                             tooltip: {
                                 style: {
                                     //width: 300
+                                },
+                                formatter: function () {
+                                    console.log(this.point)
+                                    let date = Highcharts.dateFormat("%y-%m-%d", this.x);
+                                    let time = Highcharts.dateFormat("%H:%M:%S", this.x);
+                                    return `<span style="color:${ this.point.color }">\u25CF</span> ${ this.point.name }<br/>` +
+                                        `<span>${ date } <b>${ time }</b></span><br/>` +
+                                        `<span>(${ this.point.confirmations } confirmations)</span>`
                                 },
                                 //TODO: use formatter function in order to display extra data
                                 headerFormat: '<span style="color:{point.color}">\u25CF</span> {point.key}<br/>',

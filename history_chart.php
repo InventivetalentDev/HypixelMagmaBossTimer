@@ -25,7 +25,7 @@ while ($row = $stmt->fetch()) {
     $chartData[] = array(
         "x" => $averageTime,
         "name" => $type,
-        "y" => $confirmations,
+        "confirmations" => $confirmations,
         "color" => $colorMap[$type]
     );
 }
