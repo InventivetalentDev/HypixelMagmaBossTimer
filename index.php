@@ -550,7 +550,6 @@
                                     //width: 300
                                 },
                                 formatter: function () {
-                                    console.log(this.point)
                                     let date = Highcharts.dateFormat("%y-%m-%d", this.x);
                                     let time = Highcharts.dateFormat("%H:%M:%S", this.x);
                                     return `<span style="color:${ this.point.color }">\u25CF</span> ${ this.point.name }<br/>` +
