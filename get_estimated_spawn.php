@@ -78,19 +78,19 @@ if ($lastDeath > $lastSpawn) {
 }
 
 $estimateFromBlaze = 0;
-if ($lastBlazeEvent > $lastSpawn && $now - $lastBlazeEvent < $twentyMinsInMillis) {
+if ($lastBlazeEvent > $lastSpawn && $lastBlazeEvent > $lastDeath && $now - $lastBlazeEvent < $twentyMinsInMillis) {
     $estimate = $lastBlazeEvent + $twentyMinsInMillis;
     $estimateFromBlaze = $estimate;
     $estimateSource = "blaze";
 }
 $estimateFromMagma = 0;
-if ($lastMagmaEvent > $lastSpawn && $now - $lastMagmaEvent < $tenMinsInMillis) {
+if ($lastMagmaEvent > $lastSpawn && $lastMagmaEvent > $lastDeath && $now - $lastMagmaEvent < $tenMinsInMillis) {
     $estimate = $lastMagmaEvent + $tenMinsInMillis;
     $estimateFromMagma = $estimate;
     $estimateSource = "magma";
 }
 $estimateFromMusic = 0;
-if ($lastMusicEvent > $lastSpawn && $now - $lastMusicEvent < $twoMinsInMillis) {
+if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath && $now - $lastMusicEvent < $twoMinsInMillis) {
     $estimate = $lastMusicEvent + $twoMinsInMillis;
     $estimateFromMusic = $estimate;
     $estimateSource = "music";
