@@ -380,7 +380,7 @@
 
                     let message = "";
                     if (duration < tenMinsInMillis) {
-                        message = "If you're not already in the Nether Fortress, you should get going!";
+                        message = "If you're not already in the Blazing Fortress, you should get going!";
 
                         if (localStorage.getItem("tenMinNotification") === "true") {
                             if (!tenMinuteNotification && !fiveMinuteNotification) {
