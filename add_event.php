@@ -187,7 +187,7 @@ if ($canContinue) {
     } else {
 
         logf($date, "add_event increase existing");
-        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average) VALUES(?,?,?)"))) {
+        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average) VALUES(?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+1"))) {
             logf($date, "sql error L169 " . $stmt->error);
             die("unexpected sql error");
         }
