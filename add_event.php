@@ -25,7 +25,7 @@ $username = isset($_POST["username"]) ? $_POST["username"] : "";
 //    die("missing captcha");
 //}
 
-$confirmationCheckFactor = 140;
+$confirmationCheckFactor = 100;
 
 //die("*sigh* I said don't abuse plz :(");
 
@@ -53,7 +53,7 @@ if (isset($_POST["captcha"])) {
     die("invalid request");
 }
 
-$isMod = (isset($_POST["minecraftUser"]) && strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0) ? 1 : 0;
+$isMod = (isset($_POST["minecraftUser"]) && $_POST["isModRequest"] === "true" && strpos($_SERVER["HTTP_USER_AGENT"], "BossTimerMod/") === 0) ? 1 : 0;
 
 if ($canContinue) {
     include_once "db_stuff.php";
@@ -168,6 +168,7 @@ if ($canContinue) {
         unset($stmt);
 
         $confirmations += 1;
+        $confirmations += $isMod;
         $averageDate = date("Y-m-d H:i:s", $averageTime);
 
         logf($date, "add_event add new");
