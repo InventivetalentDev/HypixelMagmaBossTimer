@@ -11,8 +11,11 @@ if ($_SERVER['REQUEST_METHOD'] !== "POST") {
 if (!isset($_POST["type"])) {
     die("missing type");
 }
+
+
 $type = $_POST["type"];
 if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music" && $type !== "death") {
+//    logf($date, "unknown event");
     die("unknown event");
 }
 
@@ -22,13 +25,16 @@ $username = isset($_POST["username"]) ? $_POST["username"] : "";
 //    die("missing captcha");
 //}
 
-$confirmationCheckFactor = 120;
+$confirmationCheckFactor = 140;
 
 //die("*sigh* I said don't abuse plz :(");
 
 $ip = $_SERVER["HTTP_CF_CONNECTING_IP"];
 
 include_once "common.php";
+
+$date = date("Y-m-d H:i:s");
+logf($date, "add_event START $type");
 
 $canContinue = false;
 if (isset($_POST["captcha"])) {
@@ -43,6 +49,7 @@ if (isset($_POST["captcha"])) {
     $canContinue = true;
 } else {
     $canContinue = false;
+    logf($date, "invalid request");
     die("invalid request");
 }
 
@@ -51,15 +58,18 @@ $isMod = (isset($_POST["minecraftUser"]) && strpos($_SERVER["HTTP_USER_AGENT"], 
 if ($canContinue) {
     include_once "db_stuff.php";
 
-    $date = date("Y-m-d H:i:s");
     $time = time();
 
     // Check last time
-    if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC"))) {
+    if (!($stmt = $conn->prepare("SELECT time FROM hypixel_skyblock_magma_timer_ips WHERE type=? AND ip=? ORDER BY time DESC LIMIT 1"))) {
+        logf($date, "sql error L63 " . $stmt->error);
         die("unexpected sql error");
     }
     $stmt->bind_param("ss", $type, $ip);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        logf($date, "sql error L70 " . $stmt->error);
+        die("unexpected sql error ");
+    }
     $stmt->bind_result($lastTime);
     if ($stmt->fetch()) {
         $lastTime = strtotime($lastTime);
@@ -71,6 +81,9 @@ if ($canContinue) {
             $stmt->execute();
             $stmt->close();
             unset($stmt);
+            $conn->close();
+
+            logf($date, "too soon A");
 
             die("nope. too soon.");
         }
@@ -81,11 +94,15 @@ if ($canContinue) {
 
 
     // also check for overall requests without event type
-    if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC"))) {
+    if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC LIMIT 1"))) {
+        logf($date, "sql error L90 " . $stmt->error);
         die("unexpected sql error");
     }
     $stmt->bind_param("s", $ip);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        logf($date, "sql error L151 " . $stmt->error);
+        die("unexpected sql error ");
+    }
     $stmt->bind_result($lastTime, $lastType);
     if ($stmt->fetch()) {
         $lastTime = strtotime($lastTime);
@@ -99,7 +116,9 @@ if ($canContinue) {
             $stmt->execute();
             $stmt->close();
             unset($stmt);
+            $conn->close();
 
+            logf($date, "too soon B");
             die("nope. too soon.");
         }
     } else {
@@ -109,14 +128,18 @@ if ($canContinue) {
 
     // Insert new request
     if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName,isMod) VALUES(?,?,?,?,?)"))) {
+        logf($date, "sql error L129 " . $stmt->error);
         die("unexpected sql error");
     }
     $stmt->bind_param("ssssi", $date, $type, $ip, $username, $isMod);
     if (!$stmt->execute()) {
+        logf($date, "sql error L134 " . $stmt->error);
         die("unexpected sql error");
     }
     $stmt->close();
     unset($stmt);
+
+//    dumpRequest("./requestDumps/$date");
 
     ////////////////////////////////
 
@@ -124,12 +147,16 @@ if ($canContinue) {
     $roundedDate = date("Y-m-d H:i:s", $roundedTime);
     $confirmations = 1;
 
-    if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC"))) {
-        die("unexpected sql error");
+    if (!($stmt = $conn->prepare("SELECT confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC LIMIT 1"))) {
+        logf($date, "sql error L139 " . $stmt->error);
+        die("unexpected sql error ");
     }
     $stmt->bind_param("ss", $type, $roundedDate);
-    $stmt->execute();
-    $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
+    if (!$stmt->execute()) {
+        logf($date, "sql error L151 " . $stmt->error);
+        die("unexpected sql error ");
+    }
+    $stmt->bind_result($confirmations, $averageDate);
     if ($stmt->fetch()) {
         $roundedTime = strtotime($roundedDate);
         $averageTime = strtotime($averageDate);
@@ -143,27 +170,42 @@ if ($canContinue) {
         $confirmations += 1;
         $averageDate = date("Y-m-d H:i:s", $averageTime);
 
+        logf($date, "add_event add new");
         if (!($stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?"))) {
+            logf($date, "sql error L158 " . $stmt->error);
             die("unexpected sql error");
         }
         $stmt->bind_param("isss", $confirmations, $averageDate, $type, $roundedDate);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            logf($date, "sql error L177 " . $stmt->error);
+            die("unexpected sql error ");
+        }
         $stmt->close();
         unset($stmt);
 
 
     } else {
+
+        logf($date, "add_event increase existing");
         if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average) VALUES(?,?,?)"))) {
+            logf($date, "sql error L169 " . $stmt->error);
             die("unexpected sql error");
         }
         $stmt->bind_param("sss", $type, $roundedDate, $date);
-        $stmt->execute();
+        if (!$stmt->execute()) {
+            logf($date, "sql error L194 " . $stmt->error);
+            die("unexpected sql error ");
+        }
         $stmt->close();
         unset($stmt);
     }
 
     echo "added";
+    $conn->close();
+
+    logf($date, "add_event ADDED $type");
 } else {
+    $conn->close();
     die();
 }
 

@@ -10,4 +10,5 @@ include_once "common.php";
 //TODO: make this return some more detailed info (currently active users, users who have it open in the background, total unique users, etc.)
 
 $users = getActiveUsers($conn);
+$conn->close();
 echo $users;

@@ -21,4 +21,5 @@ $stmt->execute();
 $stmt->close();
 unset($stmt);
 
+$conn->close();
 echo "pong";

@@ -24,11 +24,13 @@ $event_confirmations = array(
 
 $minConfirmations = 6;//TODO: make this relative to the amount of currently watching users
 
-if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
+if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 10"))) {
     die("unexpected sql error");
 }
 $stmt->bind_param("i", $minConfirmations);
-$stmt->execute();
+if (!$stmt->execute()) {
+    die("unexpected sql error ");
+}
 $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
 //TODO: we can probably make this more efficient than iterating through every row
 while ($row = $stmt->fetch()) {
@@ -43,7 +45,7 @@ while ($row = $stmt->fetch()) {
 }
 $stmt->close();
 unset($stmt);
-
+$conn->close();
 
 $twoHoursInMillis = 7.2e+6;
 $twentyMinsInMillis = 1.2e+6;
@@ -54,11 +56,11 @@ $twoMinsInMillis = 120000;
 
 $now = time() * 1000;
 
-$lastSpawn = array_values($event_times["spawn"])[0];// ~2hrs
-$lastBlazeEvent = array_values($event_times["blaze"])[0];// ~20mins
-$lastMagmaEvent = array_values($event_times["magma"])[0];// ~10mins
-$lastMusicEvent = array_values($event_times["music"])[0];// ~2mins
-$lastDeath = array_values($event_times["death"])[0];
+$lastSpawn = @array_values($event_times["spawn"])[0];// ~2hrs
+$lastBlazeEvent = @array_values($event_times["blaze"])[0];// ~20mins
+$lastMagmaEvent = @array_values($event_times["magma"])[0];// ~10mins
+$lastMusicEvent = @array_values($event_times["music"])[0];// ~2mins
+$lastDeath = @array_values($event_times["death"])[0];
 
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
