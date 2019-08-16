@@ -8,12 +8,12 @@ include_once "db_stuff.php";
 
 $events = array("blaze", "magma", "music", "spawn", "death", "restart");
 $event_times = array(
-    "blaze" => array(),
-    "magma" => array(),
-    "music" => array(),
-    "spawn" => array(),
-    "death" => array(),
-    "restart" => array()
+    "blaze" => 0,
+    "magma" => 0,
+    "music" => 0,
+    "spawn" => 0,
+    "death" => 0,
+    "restart" => 0
 );
 $event_confirmations = array(
     "blaze" => 0,
@@ -25,19 +25,23 @@ $event_confirmations = array(
 );
 
 $minConfirmations = 6;//TODO: make this relative to the amount of currently watching users
+$startTime = strtotime("2 hours ago");
+$startDate = date("Y-m-d H:i:s", $startTime);
 
-if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 10"))) {
+if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? AND time_rounded > ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
     die("unexpected sql error");
 }
-$stmt->bind_param("i", $minConfirmations);
+$stmt->bind_param("is", $minConfirmations, $startDate);
 if (!$stmt->execute()) {
     die("unexpected sql error ");
 }
 $stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
 //TODO: we can probably make this more efficient than iterating through every row
 while ($row = $stmt->fetch()) {
-    $averageTime = strtotime($averageDate);
-    $event_times[$type][] = $averageTime * 1000;
+    if ($event_times[$type] <= 0) {
+        $averageTime = strtotime($averageDate);
+        $event_times[$type] = $averageTime * 1000;
+    }
 
 
     // Just using the first available one for now (TODO maybe)
@@ -58,11 +62,11 @@ $twoMinsInMillis = 120000;
 
 $now = time() * 1000;
 
-$lastSpawn = @array_values($event_times["spawn"])[0];// ~2hrs
-$lastBlazeEvent = @array_values($event_times["blaze"])[0];// ~20mins
-$lastMagmaEvent = @array_values($event_times["magma"])[0];// ~10mins
-$lastMusicEvent = @array_values($event_times["music"])[0];// ~2mins
-$lastDeath = @array_values($event_times["death"])[0];
+$lastSpawn = $event_times["spawn"];// ~2hrs
+$lastBlazeEvent = $event_times["blaze"];// ~20mins
+$lastMagmaEvent = $event_times["magma"];// ~10mins
+$lastMusicEvent = $event_times["music"];// ~2mins
+$lastDeath = $event_times["death"];
 
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
@@ -105,7 +109,6 @@ $relativeString = time2str($estimate / 1000);
 
 header("Content-Type: application/json");
 echo json_encode(array(
-    "eventTimes" => $event_times,
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $estimate,
     "estimateRelative" => $relativeString,
