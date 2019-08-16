@@ -6,20 +6,22 @@
 include_once "common.php";
 include_once "db_stuff.php";
 
-$events = array("blaze", "magma", "music", "spawn", "death");
+$events = array("blaze", "magma", "music", "spawn", "death", "restart");
 $event_times = array(
     "blaze" => array(),
     "magma" => array(),
     "music" => array(),
     "spawn" => array(),
-    "death" => array()
+    "death" => array(),
+    "restart" => array()
 );
 $event_confirmations = array(
     "blaze" => 0,
     "magma" => 0,
     "music" => 0,
     "spawn" => 0,
-    "death" => 0
+    "death" => 0,
+    "restart" => 0
 );
 
 $minConfirmations = 6;//TODO: make this relative to the amount of currently watching users

@@ -14,7 +14,7 @@ if (!isset($_POST["type"])) {
 
 
 $type = $_POST["type"];
-if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music" && $type !== "death") {
+if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "music" && $type !== "death" && $type !== "restart") {
 //    logf($date, "unknown event");
     die("unknown event");
 }
