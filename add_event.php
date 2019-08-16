@@ -145,7 +145,7 @@ if ($canContinue) {
 
     $roundedTime = floor(floor($time / $confirmationCheckFactor) * $confirmationCheckFactor);
     $roundedDate = date("Y-m-d H:i:s", $roundedTime);
-    $confirmations = 1;
+    $confirmations = 1+$isMod;
 
     if (!($stmt = $conn->prepare("SELECT confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE type=? AND time_rounded=? ORDER BY time_rounded DESC LIMIT 1"))) {
         logf($date, "sql error L139 " . $stmt->error);
@@ -168,10 +168,10 @@ if ($canContinue) {
         unset($stmt);
 
         $confirmations += 1;
-        $confirmations += $isMod;
+        $confirmations += $isMod*5;
         $averageDate = date("Y-m-d H:i:s", $averageTime);
 
-        logf($date, "add_event add new");
+        logf($date, "add_event increase existing");
         if (!($stmt = $conn->prepare("UPDATE hypixel_skyblock_magma_timer_events2 SET confirmations=?, time_average=? WHERE type=? AND time_rounded=?"))) {
             logf($date, "sql error L158 " . $stmt->error);
             die("unexpected sql error");
@@ -187,12 +187,12 @@ if ($canContinue) {
 
     } else {
 
-        logf($date, "add_event increase existing");
-        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average) VALUES(?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+1"))) {
+        logf($date, "add_event add new");
+        if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average,confirmations) VALUES(?,?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+1"))) {
             logf($date, "sql error L169 " . $stmt->error);
             die("unexpected sql error");
         }
-        $stmt->bind_param("sss", $type, $roundedDate, $date);
+        $stmt->bind_param("sssi", $type, $roundedDate, $date,$confirmations);
         if (!$stmt->execute()) {
             logf($date, "sql error L194 " . $stmt->error);
             die("unexpected sql error ");

@@ -75,6 +75,9 @@ $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
 
+$averageEstimate = $estimate;
+$averageEstimateCounter = 1;
+
 $estimateFromDeath = 0;
 if ($lastDeath > $lastSpawn) {
     $estSpawnsSinceLast = floor(($now - $lastDeath) / $twoHoursInMillis);
@@ -82,6 +85,9 @@ if ($lastDeath > $lastSpawn) {
     $estimate = $lastDeath + (($estSpawnsSinceLast * $twoHoursInMillis));
     $estimateFromDeath = $estimate;
     $estimateSource = "death";
+
+    $averageEstimate += $estimate;
+    $averageEstimateCounter++;
 }
 
 $estimateFromBlaze = 0;
@@ -89,19 +95,30 @@ if ($lastBlazeEvent > $lastSpawn && $lastBlazeEvent > $lastDeath && $now - $last
     $estimate = $lastBlazeEvent + $twentyMinsInMillis;
     $estimateFromBlaze = $estimate;
     $estimateSource = "blaze";
+
+    $averageEstimate += $estimate;
+    $averageEstimateCounter++;
 }
 $estimateFromMagma = 0;
 if ($lastMagmaEvent > $lastSpawn && $lastMagmaEvent > $lastDeath && $now - $lastMagmaEvent < $tenMinsInMillis) {
     $estimate = $lastMagmaEvent + $tenMinsInMillis;
     $estimateFromMagma = $estimate;
     $estimateSource = "magma";
+
+    $averageEstimate += $estimate;
+    $averageEstimateCounter++;
 }
 $estimateFromMusic = 0;
 if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath && $now - $lastMusicEvent < $twoMinsInMillis) {
     $estimate = $lastMusicEvent + $twoMinsInMillis;
     $estimateFromMusic = $estimate;
     $estimateSource = "music";
+
+    $averageEstimate += $estimate;
+    $averageEstimateCounter++;
 }
+
+$averageEstimate /= $averageEstimateCounter;
 
 //array_reverse($spawn_times);
 
@@ -111,6 +128,7 @@ header("Content-Type: application/json");
 echo json_encode(array(
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $estimate,
+    "averageEstimate" => $averageEstimate,
     "estimateRelative" => $relativeString,
     "estimateSource" => $estimateSource,
     "estimates" => array(
