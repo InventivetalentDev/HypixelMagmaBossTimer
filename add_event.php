@@ -34,14 +34,51 @@ if (!isset($ip)) {
     die("missing ip header");
 }
 
+
 include_once "common.php";
 
 $date = date("Y-m-d H:i:s");
 logf($date, "add_event START $type");
 
+$ipv4 = isset($_POST["ipv4"]) ? $_POST["ipv4"] : null;
+$ipv6 = isset($_POST["ipv6"]) ? $_POST["ipv6"] : null;
+
+if ($ipv4 === $ipv6) {
+    logf($date, "ipv4===ipv6: $ipv4");
+}
+
+if (isset($ipv4) && strlen($ipv4) > 16) {
+    logf($date, "ipv4 is too long");
+    $ipv4 = null;
+}
+if (isset($ipv6) && strlen($ipv6) < 20) {
+    logf($date, "ipv6 is too short");
+    $ipv6 = null;
+}
+
+
+if (strlen($ip) <= 16) {
+    if (!$ipv4) {
+        $ipv4 = $ip;
+    } else if ($ipv4 !== $ip) {
+        logf($date, "add_event ipv4 mismatch");
+        die("ip mismatch");
+    }
+}
+
+if (strlen($ip) > 20) {
+    if (!$ipv6) {
+        $ipv6 = $ip;
+    } else if ($ipv6 !== $ip) {
+        logf($date, "add_event ipv6 mismatch");
+        die("ip mismatch");
+    }
+}
+
+$captchaRes = null;
 $canContinue = false;
 if (isset($_POST["captcha"])) {
-    if ($res = checkCaptcha($_POST["captcha"])) {
+    if ($captchaRes = checkCaptcha($_POST["captcha"])) {
         $canContinue = true;
     } else {
         $canContinue = false;
@@ -66,11 +103,25 @@ if ($canContinue) {
     usleep(100 + rand(20, 500));
 
     // Check last time
-    if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE ip=? ORDER BY time DESC LIMIT 1"))) {
-        logf($date, "sql error L63 " . $stmt->error);
-        die("unexpected sql error");
+    if (!isset($ipv6)) {
+        if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE  ipv4=? ORDER BY time DESC LIMIT 1"))) {
+            logf($date, "sql error L104 " . $stmt->error);
+            die("unexpected sql error");
+        }
+        $stmt->bind_param("s", $ipv4);
+    } else if (!isset($ipv4)) {
+        if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE  ipv6=? ORDER BY time DESC LIMIT 1"))) {
+            logf($date, "sql error L106 " . $stmt->error);
+            die("unexpected sql error");
+        }
+        $stmt->bind_param("s", $ipv6);
+    } else {
+        if (!($stmt = $conn->prepare("SELECT time,type FROM hypixel_skyblock_magma_timer_ips WHERE ipv4=? OR ipv6=? ORDER BY time DESC LIMIT 1"))) {
+            logf($date, "sql error L112 " . $stmt->error);
+            die("unexpected sql error");
+        }
+        $stmt->bind_param("ss", $ipv4, $ipv6);
     }
-    $stmt->bind_param("s", $ip);
     if (!$stmt->execute()) {
         logf($date, "sql error L70 " . $stmt->error);
         die("unexpected sql error ");
@@ -95,7 +146,7 @@ if ($canContinue) {
             die("nope. too soon.");
         }
 
-        if ($time - $lastTime < ($type === "death" && $lastType === "spawn" ? 30 : $type === "spawn" && $lastType === "music" ? 90 : 120)) {
+        if ($time - $lastTime < ($type === "death" && $lastType === "spawn" ? 20 : $type === "spawn" && $lastType === "music" ? 90 : 120)) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
             $stmt->bind_param("sss", $ip, $date, $date);
             $stmt->execute();
@@ -147,12 +198,14 @@ if ($canContinue) {
 //    }
 //    unset($stmt);
 
+    $captchaScore = (isset($captchaRes) && isset($captchaRes["score"])) ? $captchaRes["score"] : 0;
+
     // Insert new request
-    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ip,minecraftName,isMod) VALUES(?,?,?,?,?)"))) {
+    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ipv4,ipv6,minecraftName,isMod,captcha_score) VALUES(?,?,?,?,?,?,?)"))) {
         logf($date, "sql error L129 " . $stmt->error);
         die("unexpected sql error");
     }
-    $stmt->bind_param("ssssi", $date, $type, $ip, $username, $isMod);
+    $stmt->bind_param("sssssi", $date, $type, $ipv4, $ipv6, $username, $isMod, $captchaScore);
     if (!$stmt->execute()) {
         logf($date, "sql error L134 " . $stmt->error);
         die("unexpected sql error");
@@ -170,8 +223,34 @@ if ($canContinue) {
     $roundedDate = date("Y-m-d H:i:s", $roundedTime);
 //    $confirmations = 1 + $isMod;
 
-    $confirmationsIncrease = 1 + ($isMod ? 5 : 0);
+    $confirmationsIncrease = 1;
 
+    if ($isMod) {
+        $confirmationsIncrease += 2;
+    }
+
+    if (strlen($username) > 0) {
+        if (verifyMinecraftUsername($username)) {
+            $confirmationsIncrease += 2;
+        } else {
+            logf($date, "add_event wrong MC username: $username");
+            $confirmationsIncrease -= 10;// supplied a wrong username
+        }
+    }
+
+    if (isset($ipv6)) {
+        $confirmationsIncrease += 1;
+    } else {
+        $confirmationsIncrease -= 1;
+    }
+
+    logf($date, "add_event confirmationIncrease: $confirmationsIncrease");
+
+    if ($confirmationsIncrease <= 0) {
+        $conn->close();
+        logf($date, "not worth it");
+        die("added");
+    }
 
     logf($date, "add_event upsert");
     if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average,confirmations,time_latest) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+?, time_latest=?"))) {

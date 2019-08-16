@@ -24,7 +24,7 @@ $event_confirmations = array(
     "restart" => 0
 );
 
-$minConfirmations = 6;//TODO: make this relative to the amount of currently watching users
+$minConfirmations = 10;//TODO: make this relative to the amount of currently watching users
 $startTime = strtotime("2 hours ago");
 $startDate = date("Y-m-d H:i:s", $startTime);
 
@@ -75,8 +75,13 @@ $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
 $estimateFromSpawn = $estimate;
 $estimateSource = "spawn";
 
-$averageEstimate = $estimate;
-$averageEstimateCounter = 1;
+$averageEstimate = 0;
+$averageEstimateCounter = 0;
+
+if ($lastSpawn) {
+    $averageEstimate += $estimateFromSpawn;
+    $averageEstimateCounter++;
+}
 
 $estimateFromDeath = 0;
 if ($lastDeath > $lastSpawn) {
@@ -122,14 +127,17 @@ $averageEstimate /= $averageEstimateCounter;
 
 //array_reverse($spawn_times);
 
+
 $relativeString = time2str($estimate / 1000);
+$relativeAverageString = time2str($averageEstimate / 1000);
 
 header("Content-Type: application/json");
 echo json_encode(array(
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
-    "estimate" => $estimate,
-    "averageEstimate" => $averageEstimate,
-    "estimateRelative" => $relativeString,
+    "estimate" => $averageEstimate,
+    "estimateRelative" => $relativeAverageString,
+    "oldEstimate" => $estimate,
+    "oldEstimateRelative" => $relativeString,
     "estimateSource" => $estimateSource,
     "estimates" => array(
         "fromSpawn" => $estimateFromSpawn,

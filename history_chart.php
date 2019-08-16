@@ -2,7 +2,7 @@
 
 include_once "db_stuff.php";
 
-$minConfirmations = 4;
+$minConfirmations = 10;
 $sinceHours = isset($_GET["hours"]) ? max(4, min(24, intval($_GET["hours"]))) : 4;
 
 $colorMap = array(
