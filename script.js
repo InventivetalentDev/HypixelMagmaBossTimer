@@ -139,7 +139,7 @@ $(document).ready(function () {
                     $("#spawnedBtn").attr("data-tooltip", "Not Confirmed")
                 }
 
-                if (minutesUntilNextSpawn > 1 && minutesSinceLastSpawn > 5) {
+                if (minutesUntilNextSpawn > 1 && minutesSinceLastSpawn > 2) {
                     $("#deathBtn").hide();
                 } else {
                     $("#deathBtn").show();
@@ -210,7 +210,7 @@ $(document).ready(function () {
     }
 
     refreshEstimate();
-    setInterval(refreshEstimate, 60000);// update estimate every minute
+    setInterval(refreshEstimate, 30000);
 
     function ping() {
         $.ajax({

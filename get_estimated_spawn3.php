@@ -23,31 +23,56 @@ $event_confirmations = array(
     "death" => 0,
     "restart" => 0
 );
+$raw_confirmations = array(
+    "blaze" => 0,
+    "magma" => 0,
+    "music" => 0,
+    "spawn" => 0,
+    "death" => 0,
+    "restart" => 0
+);
 
 $minConfirmations = 10;//TODO: make this relative to the amount of currently watching users
-$startTime = strtotime("2 hours ago");
+$startTime = strtotime("1 hour ago");
 $startDate = date("Y-m-d H:i:s", $startTime);
 
-if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? AND time_rounded > ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
+if (!($stmt = $conn->prepare("SELECT ipv4,ipv6,type,time,minecraftName,server,isMod,captcha_score FROM hypixel_skyblock_magma_timer_ips WHERE time > NOW() - INTERVAL 1 HOUR ORDER BY time DESC"))) {
     die("unexpected sql error");
 }
-$stmt->bind_param("is", $minConfirmations, $startDate);
+//$stmt->bind_param("s", $startDate);
 if (!$stmt->execute()) {
     die("unexpected sql error ");
 }
-$stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
-//TODO: we can probably make this more efficient than iterating through every row
+$stmt->bind_result($ipv4, $ipv6, $type, $time, $minecraftName, $server, $isMod, $captchaScore);
 while ($row = $stmt->fetch()) {
+    $time = strtotime($time);
+
+    $confidence = 1;
+
+    if ($isMod) {
+        $confidence += 5;
+    } else if ($captchaScore >= 0.9) {
+        $confidence += 1;
+    }
+    if (strlen($server) > 0) {
+        $confidence += 1;
+    }
+    if (strlen($minecraftName) > 0) {
+        $confidence += 2;
+    }
+    if (strlen($ipv6) > 0) {
+        $confidence += 1;
+    }
+
     if ($event_times[$type] <= 0) {
-        $averageTime = strtotime($averageDate);
-        $event_times[$type] = $averageTime * 1000;
+        $event_times[$type] = $time;
+    } else {
+        $event_times[$type] = floor(($event_times[$type] + $confidence * $time) / ($confidence + 1));
     }
 
 
-    // Just using the first available one for now (TODO maybe)
-    if ($event_confirmations[$type] <= 0) {
-        $event_confirmations[$type] = $confirmations;
-    }
+    $event_confirmations[$type] += $confidence;
+    $raw_confirmations[$type]++;
 }
 $stmt->close();
 unset($stmt);
@@ -62,11 +87,11 @@ $twoMinsInMillis = 120000;
 
 $now = time() * 1000;
 
-$lastSpawn = $event_times["spawn"];// ~2hrs
-$lastBlazeEvent = $event_times["blaze"];// ~20mins
-$lastMagmaEvent = $event_times["magma"];// ~10mins
-$lastMusicEvent = $event_times["music"];// ~2mins
-$lastDeath = $event_times["death"];
+$lastSpawn = $event_times["spawn"]*1000;// ~2hrs
+$lastBlazeEvent = $event_times["blaze"]*1000;// ~20mins
+$lastMagmaEvent = $event_times["magma"]*1000;// ~10mins
+$lastMusicEvent = $event_times["music"]*1000;// ~2mins
+$lastDeath = $event_times["death"]*1000;
 
 $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
 $estSpawnsSinceLast += 1;// add the last known spawn
@@ -79,8 +104,8 @@ $averageEstimate = 0;
 $averageEstimateCounter = 0;
 
 if ($lastSpawn) {
-    $averageEstimate += $estimateFromSpawn*$event_confirmations["spawn"];
-    $averageEstimateCounter+=$event_confirmations["spawn"];
+    $averageEstimate += $estimateFromSpawn * ($event_confirmations["spawn"]+10);
+    $averageEstimateCounter += $event_confirmations["spawn"]+10;
 }
 
 $estimateFromDeath = 0;
@@ -123,14 +148,13 @@ if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath  && $lastMusicE
     $averageEstimateCounter += $event_confirmations["music"];
 }
 
-if($averageEstimateCounter>0) {
+if ($averageEstimateCounter > 0) {
     $averageEstimate = floor($averageEstimate / $averageEstimateCounter);
 }
 
 //array_reverse($spawn_times);
 
 
-$relativeString = time2str($estimate / 1000);
 $relativeAverageString = time2str($averageEstimate / 1000);
 
 header("Content-Type: application/json");
@@ -138,8 +162,6 @@ echo json_encode(array(
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
     "estimate" => $averageEstimate,
     "estimateRelative" => $relativeAverageString,
-    "oldEstimate" => $estimate,
-    "oldEstimateRelative" => $relativeString,
     "estimateSource" => $estimateSource,
     "estimates" => array(
         "fromSpawn" => $estimateFromSpawn,
@@ -156,4 +178,5 @@ echo json_encode(array(
         "death" => $lastDeath
     ),
     "latestConfirmations" => $event_confirmations,
+    "latestConfirmationsNonWeighed" => $raw_confirmations
 ));

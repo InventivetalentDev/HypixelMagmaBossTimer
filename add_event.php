@@ -20,12 +20,13 @@ if ($type !== "spawn" && $type !== "blaze" && $type !== "magma" && $type !== "mu
 }
 
 $username = isset($_POST["username"]) ? $_POST["username"] : "";
+$serverId = isset($_POST["serverId"]) ? $_POST["serverId"] : "";
 
 //if (!isset($_POST["captcha"])) {
 //    die("missing captcha");
 //}
 
-$confirmationCheckFactor = 140;
+$confirmationCheckFactor = 100;
 
 //die("*sigh* I said don't abuse plz :(");
 
@@ -146,7 +147,9 @@ if ($canContinue) {
             die("nope. too soon.");
         }
 
-        if ($time - $lastTime < ($type === "death" && $lastType === "spawn" ? 20 : $type === "spawn" && $lastType === "music" ? 90 : 120)) {
+        $throttle = ($type === "death" && $lastType === "spawn" ? 10 : $type === "spawn" && $lastType === "music" ? 60 : 120);
+        header("X-Event-Throttle: $throttle");
+        if ($time - $lastTime < $throttle) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
             $stmt->bind_param("sss", $ip, $date, $date);
             $stmt->execute();
@@ -198,16 +201,33 @@ if ($canContinue) {
 //    }
 //    unset($stmt);
 
+
+    $confirmationsIncrease = 1;
+
+    if (strlen($username) > 0) {
+        if (verifyMinecraftUsername($username)) {
+            $confirmationsIncrease += 2;
+        } else {
+            logf($date, "add_event wrong MC username: $username");
+            $confirmationsIncrease -= 10;// supplied a wrong username
+            die("added");
+        }
+    }
+
+
     $captchaScore = (isset($captchaRes) && isset($captchaRes["score"])) ? $captchaRes["score"] : 0;
 
     // Insert new request
-    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ipv4,ipv6,minecraftName,isMod,captcha_score) VALUES(?,?,?,?,?,?,?)"))) {
-        logf($date, "sql error L129 " . $stmt->error);
+    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_ips (time,type,ipv4,ipv6,minecraftName,server,isMod,captcha_score) VALUES(?,?,?,?,?,?,?,?)"))) {
+        logf($date, "sql error L206 " . $stmt->error);
         die("unexpected sql error");
     }
-    $stmt->bind_param("sssssi", $date, $type, $ipv4, $ipv6, $username, $isMod, $captchaScore);
+    if (!$stmt->bind_param("ssssssid", $date, $type, $ipv4, $ipv6, $username, $serverId, $isMod, $captchaScore)) {
+        logf($date, "sql error L210 " . $stmt->error);
+        die("unexpected sql error");
+    }
     if (!$stmt->execute()) {
-        logf($date, "sql error L134 " . $stmt->error);
+        logf($date, "sql error L214 " . $stmt->error);
         die("unexpected sql error");
     }
     $stmt->close();
@@ -223,20 +243,12 @@ if ($canContinue) {
     $roundedDate = date("Y-m-d H:i:s", $roundedTime);
 //    $confirmations = 1 + $isMod;
 
-    $confirmationsIncrease = 1;
+
 
     if ($isMod) {
         $confirmationsIncrease += 2;
     }
 
-    if (strlen($username) > 0) {
-        if (verifyMinecraftUsername($username)) {
-            $confirmationsIncrease += 2;
-        } else {
-            logf($date, "add_event wrong MC username: $username");
-            $confirmationsIncrease -= 10;// supplied a wrong username
-        }
-    }
 
     if (isset($ipv6)) {
         $confirmationsIncrease += 1;
@@ -257,10 +269,17 @@ if ($canContinue) {
         logf($date, "sql error L155 " . $stmt->error);
         die("unexpected sql error");
     }
-    $stmt->bind_param("sssisis", $type, $roundedDate, $date, $confirmationsIncrease, $date, $confirmationsIncrease, $date);
-    if (!$stmt->execute()) {
-        logf($date, "sql error L160 " . $stmt->error);
+    if(!$stmt->bind_param("sssisis", $type, $roundedDate, $date, $confirmationsIncrease, $date, $confirmationsIncrease, $date)){
+        logf($date, "sql error L262 " . $conn->error);
         die("unexpected sql error ");
+    }
+    if (!$stmt->execute()) {
+        logf($date, "sql error L266 " . $conn->error);
+        die("unexpected sql error ");
+    }
+    if ($conn->errno !== 0) {
+        logf($date, "sql errno: " . $conn->errno);
+        die("unexpected sql error");
     }
     $stmt->close();
     unset($stmt);

@@ -125,6 +125,11 @@
 
         <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a></span>
 
+        <div id="captchaModal" class="modal">
+            <div class="modal-content">
+
+            </div>
+        </div>
 
         <div id="infoModal" class="modal">
             <div class="modal-content">
