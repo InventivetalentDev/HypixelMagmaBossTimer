@@ -88,7 +88,7 @@
                     <h4 class="center-align" id="suggestionMessage"></h4>
                     <br/>
                     <br/>
-                    <span>Last tracked <span id="lastTrackedType">spawn</span> was <span id="lastTrackedTime"></span></span>
+                    <span id="lastTrackedWrapper">Last tracked <span id="lastTrackedType">spawn</span> was <span id="lastTrackedTime"></span></span>
                 </div>
 
                 <br/>

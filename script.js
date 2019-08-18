@@ -63,6 +63,10 @@ $(document).ready(function () {
         $("#lastTrackedType").text(deathMoreRecent ? "death" : "spawn");
         $("#lastTrackedTime").html(moment(latestThing).fromNow() + "<br/> (" + moment(latestThing).format('MMMM Do YYYY, h:mm:ss a') + ")" + ((hoursSinceLastSpawn > 5 && hoursSinceLastDeath > 5) ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
+        if (estimateData.latest.death === 0 && estimateData.latest.spawn ===0) {
+            $("#lastTrackedWrapper").hide();
+        }
+
         let duration = estimateData.estimate - now;
         let formattedTimer = moment.utc(duration).format("HH:mm:ss");
         if (duration > 0) {
