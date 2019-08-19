@@ -20,6 +20,11 @@ $(document).ready(function () {
     let bgIndex = getRndInteger(1, 10);
     $("#bgImage").css("background-image", "url(img/bg/" + bgIndex + ".jpg), url(img/bg/" + bgIndex + ".png)");
 
+    const devMode = window.location.hash === "#DEV";
+    if (devMode) {
+        $("#d").text("DEV MODE ACTIVE");
+    }
+
     let now = new Date().getTime();
     let twoHoursInMillis = 7.2e+6;
     let oneAndHalfHourInMillis = 5.4e+6;
@@ -63,7 +68,7 @@ $(document).ready(function () {
         $("#lastTrackedType").text(deathMoreRecent ? "death" : "spawn");
         $("#lastTrackedTime").html(moment(latestThing).fromNow() + "<br/> (" + moment(latestThing).format('MMMM Do YYYY, h:mm:ss a') + ")" + ((hoursSinceLastSpawn > 5 && hoursSinceLastDeath > 5) ? "<br/><i>The timer could likely be inaccurate, since server restarts etc. are not accounted for</i>" : "") + "");
 
-        if (estimateData.latest.death === 0 && estimateData.latest.spawn ===0) {
+        if (estimateData.latest.death <= 0 && estimateData.latest.spawn <= 0) {
             $("#lastTrackedWrapper").hide();
         }
 
@@ -198,7 +203,7 @@ $(document).ready(function () {
     }
 
     function refreshEstimate() {
-        $.ajax("get_estimated_spawn.php").done(function (data) {
+        $.ajax("get_estimated_spawn" + (devMode ? "3" : "") + ".php").done(function (data) {
             console.log(data);
             estimateData = data;
 

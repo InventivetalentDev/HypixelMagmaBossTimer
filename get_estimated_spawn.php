@@ -24,22 +24,25 @@ $event_confirmations = array(
     "restart" => 0
 );
 
-$minConfirmations = 10;//TODO: make this relative to the amount of currently watching users
-$startTime = strtotime("2 hours ago");
+$minConfirmations = 20;//TODO: make this relative to the amount of currently watching users
+$startTime = strtotime("-2 hours 30 minutes");
 $startDate = date("Y-m-d H:i:s", $startTime);
 
-if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? AND time_rounded > ? ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
+if (!($stmt = $conn->prepare("SELECT type,time_rounded,confirmations,time_average,time_latest FROM hypixel_skyblock_magma_timer_events2 WHERE confirmations >= ? AND time_rounded >= NOW() - INTERVAL 2 HOUR ORDER BY time_rounded DESC, confirmations DESC LIMIT 20"))) {
     die("unexpected sql error");
 }
-$stmt->bind_param("is", $minConfirmations, $startDate);
+$stmt->bind_param("i", $minConfirmations);
 if (!$stmt->execute()) {
     die("unexpected sql error ");
 }
-$stmt->bind_result($type, $roundedDate, $confirmations, $averageDate);
+$stmt->bind_result($type, $roundedDate, $confirmations, $averageDate, $latestDate);
 //TODO: we can probably make this more efficient than iterating through every row
 while ($row = $stmt->fetch()) {
-    if ($event_times[$type] <= 0) {
-        $averageTime = strtotime($averageDate);
+    $averageTime = strtotime($averageDate);
+    $latestTime = strtotime($latestDate);
+    $averageTime = ($averageTime + $latestTime) / 2;
+
+    if ($event_times[$type] <= 0 || ($confirmations > $event_confirmations[$type] && ($event_times[$type] - $averageTime < 240))) {
         $event_times[$type] = $averageTime * 1000;
     }
 
@@ -68,31 +71,38 @@ $lastMagmaEvent = $event_times["magma"];// ~10mins
 $lastMusicEvent = $event_times["music"];// ~2mins
 $lastDeath = $event_times["death"];
 
-$estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
-$estSpawnsSinceLast += 1;// add the last known spawn
-$estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
+$estSpawnsSinceLast = 0;
+$estDeathsSinceLast = 0;
 
-$estimateFromSpawn = $estimate;
-$estimateSource = "spawn";
+$estimateSource = "nono";
 
+$estimate = 0;
 $averageEstimate = 0;
 $averageEstimateCounter = 0;
 
+$estimateFromSpawn = 0;
 if ($lastSpawn) {
-    $averageEstimate += $estimateFromSpawn*$event_confirmations["spawn"];
-    $averageEstimateCounter+=$event_confirmations["spawn"];
+    $estSpawnsSinceLast = floor(($now - $lastSpawn) / $twoHoursInMillis);
+    $estSpawnsSinceLast += 1;// add the last known spawn
+    $estimate = $lastSpawn + (($estSpawnsSinceLast * $twoHoursInMillis));
+
+    $estimateFromSpawn = $estimate;
+    $estimateSource = "spawn";
+
+    $averageEstimate += $estimateFromSpawn * $event_confirmations["spawn"];
+    $averageEstimateCounter += $event_confirmations["spawn"];
 }
 
 $estimateFromDeath = 0;
 if ($lastDeath > $lastSpawn) {
-    $estSpawnsSinceLast = floor(($now - $lastDeath) / $twoHoursInMillis);
-    $estSpawnsSinceLast += 1;// add the last known spawn
-    $estimate = $lastDeath + (($estSpawnsSinceLast * $twoHoursInMillis));
+    $estDeathsSinceLast = floor(($now - $lastDeath) / $twoHoursInMillis);
+    $estDeathsSinceLast += 1;// add the last known spawn
+    $estimate = $lastDeath + (($estDeathsSinceLast * $twoHoursInMillis));
     $estimateFromDeath = $estimate;
     $estimateSource = "death";
 
-    $averageEstimate += $estimate * ($event_confirmations["death"]+10);
-    $averageEstimateCounter += $event_confirmations["death"]+10;
+    $averageEstimate += $estimate * ($event_confirmations["death"]);
+    $averageEstimateCounter += $event_confirmations["death"];
 }
 
 $estimateFromBlaze = 0;
@@ -105,7 +115,7 @@ if ($lastBlazeEvent > $lastSpawn && $lastBlazeEvent > $lastDeath && $now - $last
     $averageEstimateCounter += $event_confirmations["blaze"];
 }
 $estimateFromMagma = 0;
-if ($lastMagmaEvent > $lastSpawn && $lastMagmaEvent > $lastDeath &&$lastMagmaEvent > $lastBlazeEvent && $now - $lastMagmaEvent < $tenMinsInMillis) {
+if ($lastMagmaEvent > $lastSpawn && $lastMagmaEvent > $lastDeath && $lastMagmaEvent > $lastBlazeEvent && $now - $lastMagmaEvent < $tenMinsInMillis) {
     $estimate = $lastMagmaEvent + $tenMinsInMillis;
     $estimateFromMagma = $estimate;
     $estimateSource = "magma";
@@ -114,7 +124,7 @@ if ($lastMagmaEvent > $lastSpawn && $lastMagmaEvent > $lastDeath &&$lastMagmaEve
     $averageEstimateCounter += $event_confirmations["magma"];
 }
 $estimateFromMusic = 0;
-if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath  && $lastMusicEvent > $lastMagmaEvent && $now - $lastMusicEvent < $twoMinsInMillis) {
+if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath && $lastMusicEvent > $lastMagmaEvent && $now - $lastMusicEvent < $twoMinsInMillis) {
     $estimate = $lastMusicEvent + $twoMinsInMillis;
     $estimateFromMusic = $estimate;
     $estimateSource = "music";
@@ -123,7 +133,7 @@ if ($lastMusicEvent > $lastSpawn && $lastMusicEvent > $lastDeath  && $lastMusicE
     $averageEstimateCounter += $event_confirmations["music"];
 }
 
-if($averageEstimateCounter>0) {
+if ($averageEstimateCounter > 0) {
     $averageEstimate = floor($averageEstimate / $averageEstimateCounter);
 }
 
@@ -136,6 +146,7 @@ $relativeAverageString = time2str($averageEstimate / 1000);
 header("Content-Type: application/json");
 echo json_encode(array(
     "estSpawnsSinceLast" => $estSpawnsSinceLast,
+    "estDeathsSinceLast"=>$estDeathsSinceLast,
     "estimate" => $averageEstimate,
     "estimateRelative" => $relativeAverageString,
     "oldEstimate" => $estimate,

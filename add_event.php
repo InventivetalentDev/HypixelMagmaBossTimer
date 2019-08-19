@@ -147,7 +147,7 @@ if ($canContinue) {
             die("nope. too soon.");
         }
 
-        $throttle = ($type === "death" && $lastType === "spawn" ? 10 : $type === "spawn" && $lastType === "music" ? 60 : 120);
+        $throttle = ($type === "death" && $lastType === "spawn" ? 10 : $type === "spawn" && $lastType === "music" ? 40 : 120);
         header("X-Event-Throttle: $throttle");
         if ($time - $lastTime < $throttle) {
             $stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_suspicious_ips (ip,time) VALUES(?,?) ON DUPLICATE KEY UPDATE time=?, counter=counter+1");
@@ -233,7 +233,7 @@ if ($canContinue) {
     $stmt->close();
     unset($stmt);
 
-    dumpRequest("./requestDumps/$date");
+//    dumpRequest("./requestDumps/$date");
 
     usleep(20 + rand(50, 1000));
 
@@ -264,12 +264,14 @@ if ($canContinue) {
         die("added");
     }
 
+    $hash = hash("md5", $type . $roundedDate);
+
     logf($date, "add_event upsert");
-    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (type,time_rounded,time_average,confirmations,time_latest) VALUES(?,?,?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+?, time_latest=?"))) {
+    if (!($stmt = $conn->prepare("INSERT INTO hypixel_skyblock_magma_timer_events2 (hash,type,time_rounded,time_average,confirmations,time_latest) VALUES(?,?,?,?,?,?) ON DUPLICATE KEY UPDATE confirmations=confirmations+?, time_latest=?"))) {
         logf($date, "sql error L155 " . $stmt->error);
         die("unexpected sql error");
     }
-    if(!$stmt->bind_param("sssisis", $type, $roundedDate, $date, $confirmationsIncrease, $date, $confirmationsIncrease, $date)){
+    if(!$stmt->bind_param("ssssisis", $hash,$type, $roundedDate, $date, $confirmationsIncrease, $date, $confirmationsIncrease, $date)){
         logf($date, "sql error L262 " . $conn->error);
         die("unexpected sql error ");
     }
