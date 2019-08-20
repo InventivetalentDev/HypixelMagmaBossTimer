@@ -68,6 +68,15 @@
 
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script>
+            (adsbygoogle = window.adsbygoogle || []).push({
+                google_ad_client: "ca-pub-2604356629473365",
+                enable_page_level_ads: true
+            });
+        </script>
     </head>
     <body>
         <div id="bgImage"></div>
@@ -209,6 +218,19 @@
             </div>
         </div>
 
+        <div id="confirmationModal" class="modal">
+            <div class="modal-content">
+                <h4>Confirm</h4>
+
+                <form id="eventConfirmationForm" action="?" method="POST">
+                    <div class="g-recaptcha" data-sitekey="6Led-7MUAAAAAKQVfJ0Yj2cLtHghGUmOLuytKMMD" data-callback="confirmCaptchaCallback"></div>
+                    <input id="addEventType" name="type" type="hidden" value="">
+                    <br/>
+                    <button id="captchaConfirmSubmit" class="btn" type="submit" style="display:none;">Submit</button>
+                </form>
+            </div>
+        </div>
+
         <script>
             if (location.host !== "hypixel.inventivetalent.org") {
                 window.location = "https://hypixel.inventivetalent.org/skyblock-magma-timer";
@@ -218,7 +240,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-        <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>
+<!--        <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>-->
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/timeline.js"></script>
 
@@ -234,5 +256,11 @@
         <script src="https://cdn.jsdelivr.net/gh/InventivetalentDev/DonationPopup@master/DonationPopup.min.js"></script>
 
         <script src="script.min.js"></script>
+        <script>
+            function confirmCaptchaCallback() {
+                $("#captchaConfirmSubmit").attr("disabled", false);
+                $("#captchaConfirmSubmit").show();
+            }
+        </script>
     </body>
 </html>

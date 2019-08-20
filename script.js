@@ -6,6 +6,12 @@ $(document).ready(function () {
             makeTimelineChart();
         }
     });
+    $("#confirmationModal").modal({
+        onCloseStart: function () {
+            $("#addEventType").val("");
+            $("#captchaConfirmSubmit").hide();
+        }
+    });
     $('.track-btn.tooltipped').tooltip({
         position: "left"
     });
@@ -259,30 +265,66 @@ $(document).ready(function () {
     });
 
     function doEventPost($this, event, eventDescription, skipEstimateRefresh) {
-        let username = $("#mcUsername").val();
-        confirmAndCaptchaAdd(eventDescription, function (b) {
-            if (b) {
-                $this.attr("disabled", true);
-                $.ajax({
-                    method: "POST",
-                    url: "https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/addEvent",
-                    data: {
-                        type: event,
-                        captcha: reCaptchaToken,
-                        username: username,
-                        ipv4: ipv4,
-                        ipv6: ipv6
-                    }
-                }).done(function () {
-                    // $this.css("display", "none");
-                    $this.attr("disabled", true);
-
-                    if (!skipEstimateRefresh)
-                        refreshEstimate();
-                })
-            }
-        })
+        showConfirmationModal(event);
+        $this.attr("disabled", true);
+        // let username = $("#mcUsername").val();
+        // confirmAndCaptchaAdd(eventDescription, function (b) {
+        //     if (b) {
+        //         $this.attr("disabled", true);
+        //         $.ajax({
+        //             method: "POST",
+        //             url: "https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/addEvent",
+        //             data: {
+        //                 type: event,
+        //                 captcha: reCaptchaToken,
+        //                 username: username,
+        //                 ipv4: ipv4,
+        //                 ipv6: ipv6
+        //             }
+        //         }).done(function () {
+        //             // $this.css("display", "none");
+        //             $this.attr("disabled", true);
+        //
+        //             if (!skipEstimateRefresh)
+        //                 refreshEstimate();
+        //         })
+        //     }
+        // })
     }
+
+    function showConfirmationModal(event) {
+        $("#addEventType").val(event);
+        $("#confirmationModal").modal("open");
+    }
+
+    $("#eventConfirmationForm").on("submit", function (e) {
+        e.preventDefault();
+        $("#captchaConfirmSubmit").attr("disabled", true);
+
+        let event = $("#addEventType").val();
+        if (!event) return;
+        let captcha = grecaptcha.getResponse();
+
+        let username = $("#mcUsername").val();
+
+
+        $.ajax({
+            method: "POST",
+            url: "https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/addEvent",
+            data: {
+                type: event,
+                captcha: captcha,
+                username: username,
+                ipv4: ipv4,
+                ipv6: ipv6
+            }
+        }).done(function () {
+            $("#confirmationModal").modal("close");
+
+            refreshEstimate();
+        })
+    });
+
 
     $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true");
     $("#tenMinNotificationSwitch").change(function () {
@@ -296,6 +338,7 @@ $(document).ready(function () {
             localStorage.setItem("tenMinNotification", "false");
         }
     });
+
 
     $("#fiveMinNotificationSwitch").prop("checked", localStorage.getItem("fiveMinNotification") === "true");
     $("#fiveMinNotificationSwitch").change(function () {
