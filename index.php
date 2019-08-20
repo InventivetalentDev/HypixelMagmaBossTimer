@@ -190,7 +190,7 @@
                         </span>
                     </div>
                     <div class="col s6 right-align">
-                        <span><a href="https://download.inventivetalent.org/gh/SkyblockBossTimerMod/1.2.0" target="_blank"><b>Download the Minecraft Mod</b> &nbsp; <i class="material-icons small" style="vertical-align:middle;">cloud_download</i></a></span>
+                        <span><a href="https://hypixel.inventivetalent.org/skyblock-magma-timer/mod" target="_blank"><b>Download the Minecraft Mod</b> &nbsp; <i class="material-icons small" style="vertical-align:middle;">cloud_download</i></a></span>
                         <br/>
                         <span>(Automatically tracks events & shows time ingame)</span>
                     </div>

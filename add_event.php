@@ -101,7 +101,7 @@ if ($canContinue) {
 
     $time = time();
 
-    usleep(100 + rand(20, 500));
+//    usleep(100 + rand(20, 500));
 
     // Check last time
     if (!isset($ipv6)) {
@@ -235,7 +235,7 @@ if ($canContinue) {
 
 //    dumpRequest("./requestDumps/$date");
 
-    usleep(20 + rand(50, 1000));
+//    usleep(20 + rand(50, 1000));
 
     ////////////////////////////////
 

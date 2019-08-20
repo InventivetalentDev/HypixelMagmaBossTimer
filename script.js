@@ -91,7 +91,7 @@ $(document).ready(function () {
                 } else {
                     $("#waveBlazeBtn").show();
                 }
-                if (minutesSinceLastBlaze < 30 && minutesSinceLastBlaze > 5)
+                if ((minutesSinceLastBlaze < 30 && minutesSinceLastBlaze > 5) || (estimateData.latest.blaze === 0 && minutesSinceLastMagma < 30 && minutesSinceLastMagma > 1))
                     $("#waveBlazeBtn").attr("disabled", true);
                 if (now - estimateData.latest.blaze < twentyMinsInMillis) {
                     $("#waveBlazeTime").text("(" + moment(estimateData.latest.blaze).fromNow() + ")");
@@ -107,7 +107,7 @@ $(document).ready(function () {
                 } else {
                     $("#waveMagmaBtn").show();
                 }
-                if (minutesSinceLastMagma < 30 && minutesSinceLastMagma > 5)
+                if ((minutesSinceLastMagma < 30 && minutesSinceLastMagma > 5) || (estimateData.latest.magma === 0 && minutesSinceLastMusic < 30 && minutesSinceLastMusic > 1))
                     $("#waveMagmaBtn").attr("disabled", true);
                 if (now - estimateData.latest.magma < tenMinsInMillis) {
                     $("#waveMagmaTime").text("(" + moment(estimateData.latest.magma).fromNow() + ")");
@@ -203,7 +203,7 @@ $(document).ready(function () {
     }
 
     function refreshEstimate() {
-        $.ajax("get_estimated_spawn" + (devMode ? "3" : "") + ".php").done(function (data) {
+        $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/estimatedSpawn").done(function (data) {
             console.log(data);
             estimateData = data;
 
@@ -213,8 +213,8 @@ $(document).ready(function () {
             timerId = setInterval(updateTimer, 1000);// tick every second
         });
 
-        $.ajax("get_active_users.php").done(function (data) {
-            $("#activeUserCount").text(data);
+        $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/activeUsers").done(function (data) {
+            $("#activeUserCount").text(data.activeUsers);
         })
     }
 
@@ -224,7 +224,7 @@ $(document).ready(function () {
     function ping() {
         $.ajax({
             method: "POST",
-            url: "ping.php",
+            url: "https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/ping",
             data: {
                 lastFocused: Math.floor(lastFocused),
                 minecraftUser: $("#mcUsername").val(),
@@ -265,7 +265,7 @@ $(document).ready(function () {
                 $this.attr("disabled", true);
                 $.ajax({
                     method: "POST",
-                    url: "add_event.php",
+                    url: "https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/addEvent",
                     data: {
                         type: event,
                         captcha: reCaptchaToken,
@@ -316,7 +316,7 @@ $(document).ready(function () {
     });
 
     function makeTimelineChart() {
-        $.ajax("history_chart.php?hours=" + historyHours).done(function (data) {
+        $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/historyChart?hours=" + historyHours).done(function (data) {
             Highcharts.chart('timelineChart', {
                 chart: {
                     zoomType: 'x',
@@ -368,7 +368,7 @@ $(document).ready(function () {
                     marker: {
                         symbol: 'circle'
                     },
-                    data: data
+                    data: data.chart
                 }]
             });
         });
