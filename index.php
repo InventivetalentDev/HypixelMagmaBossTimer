@@ -222,6 +222,11 @@
             <div class="modal-content">
                 <h4>Confirm</h4>
 
+                <p>
+                    Are you sure you would like to add this event? Please note that this will affect the timer globally.
+                    <br/>
+                </p>
+
                 <form id="eventConfirmationForm" action="?" method="POST">
                     <div class="g-recaptcha" data-sitekey="6Led-7MUAAAAAKQVfJ0Yj2cLtHghGUmOLuytKMMD" data-callback="confirmCaptchaCallback"></div>
                     <input id="addEventType" name="type" type="hidden" value="">
