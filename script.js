@@ -12,6 +12,12 @@ $(document).ready(function () {
             $("#captchaConfirmSubmit").hide();
         }
     });
+    $("#eventInfoModal").modal({
+        onOpenEnd: function () {
+            $("#magmaWaveVideo")[0].play();
+            $("#magmaBossVideo")[0].play();
+        }
+    })
     $('.track-btn.tooltipped').tooltip({
         position: "left"
     });
@@ -183,17 +189,6 @@ $(document).ready(function () {
 
 
         let message = "";
-        if (duration < tenMinsInMillis) {
-            message = "If you're not already in the Blazing Fortress, you should get going!";
-
-            if (localStorage.getItem("tenMinNotification") === "true") {
-                if (!tenMinuteNotification && !fiveMinuteNotification) {
-                    tenMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than 10 minutes!");
-                }
-            }
-        } else {
-            tenMinuteNotification = null;
-        }
         if (duration < fiveMinsInMillis) {
             message = "Get ready!";
 
@@ -205,6 +200,18 @@ $(document).ready(function () {
         } else {
             fiveMinuteNotification = null;
         }
+        if (duration < tenMinsInMillis) {
+            message = "If you're not already in the Blazing Fortress, you should get going!";
+
+            if (localStorage.getItem("tenMinNotification") === "true") {
+                if (!tenMinuteNotification && !fiveMinuteNotification) {
+                    tenMinuteNotification = showNotification("The Skyblock Magma Boss should spawn in less than 10 minutes!");
+                }
+            }
+        } else {
+            tenMinuteNotification = null;
+        }
+
         $("#suggestionMessage").text(message);
     }
 
