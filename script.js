@@ -14,6 +14,7 @@ $(document).ready(function () {
     });
     $("#eventInfoModal").modal({
         onOpenEnd: function () {
+            $("#blazeWaveVideo")[0].play();
             $("#magmaWaveVideo")[0].play();
             $("#magmaBossVideo")[0].play();
         }

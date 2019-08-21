@@ -128,17 +128,15 @@
                         Magma Boss Died <span id="deathTime"></span>
                     </button>
                 </div>
+
+                <br/>
+                 <a href="#eventInfoModal" class="modal-trigger">What do the waves look like?</a>
             </div>
 
         </div>
 
         <span style="position: fixed; bottom: 4px; left: 4px; color: gray;">Created by <a target="_blank" href="https://inventivetalent.org/?utm_source=hypixel_magma_tracker">inventivetalent</a> <span id="d"></span></span>
 
-        <div id="captchaModal" class="modal">
-            <div class="modal-content">
-
-            </div>
-        </div>
 
         <div id="infoModal" class="modal">
             <div class="modal-content">
@@ -218,6 +216,48 @@
             </div>
         </div>
 
+        <div id="eventInfoModal" class="modal bottom-sheet">
+            <div class="modal-content">
+                <h4>Events</h4>
+
+                <div class="row">
+                    <div class="col s12 m4">
+                        <h6>Blaze Wave
+                            <small>(20 minutes before spawn)</small>
+                        </h6>
+                        <video loop class="responsive-video" id="blazeWaveVideo">
+                            <source src="./img/blaze-wave.mp4" type='video/mp4'/>
+                            <source src="./img/blaze-wave.webm" type='video/webm'/>
+                            <img src="./img/blaze-wave.gif" title="Your browser does not support the <video> tag">
+                        </video>
+
+                    </div>
+
+                    <div class="col s12 m4">
+                        <h6>Magma Wave
+                            <small>(10 minutes before spawn)</small>
+                        </h6>
+                        <video loop class="responsive-video" id="magmaWaveVideo">
+                            <source src="./img/magma-wave.mp4" type='video/mp4'/>
+                            <source src="./img/magma-wave.webm" type='video/webm'/>
+                            <img src="./img/magma-wave.gif" title="Your browser does not support the <video> tag">
+                        </video>
+                    </div>
+
+                    <div class="col s12 m4">
+                        <h6>Magma Boss</h6>
+                        <video loop class="responsive-video" id="magmaBossVideo">
+                            <source src="./img/magma-boss.mp4" type='video/mp4'/>
+                            <source src="./img/magma-boss.webm" type='video/webm'/>
+                            <img src="./img/magma-boss.gif" title="Your browser does not support the <video> tag">
+                        </video>
+                    </div>
+                </div>
+
+                <br>
+            </div>
+        </div>
+
         <div id="confirmationModal" class="modal">
             <div class="modal-content">
                 <h4>Confirm</h4>
@@ -228,7 +268,7 @@
                 </p>
 
                 <form id="eventConfirmationForm" action="?" method="POST">
-                    <div class="g-recaptcha" data-sitekey="6Led-7MUAAAAAKQVfJ0Yj2cLtHghGUmOLuytKMMD" data-callback="confirmCaptchaCallback"></div>
+                    <div class="g-recaptcha" data-sitekey="6Led-7MUAAAAAKQVfJ0Yj2cLtHghGUmOLuytKMMD" data-theme="dark" data-callback="confirmCaptchaCallback"></div>
                     <input id="addEventType" name="type" type="hidden" value="">
                     <br/>
                     <button id="captchaConfirmSubmit" class="btn" type="submit" style="display:none;">Submit</button>
@@ -245,7 +285,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js" integrity="sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=" crossorigin="anonymous"></script>
-<!--        <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>-->
+        <!--        <script src="https://www.google.com/recaptcha/api.js?render=6LeaYLIUAAAAAHfC2C6GsI84CW5sJjuaZA9FERRE"></script>-->
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/timeline.js"></script>
 
