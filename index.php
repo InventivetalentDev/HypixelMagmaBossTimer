@@ -97,6 +97,9 @@
                     <h4 class="center-align" id="suggestionMessage"></h4>
                     <br/>
                     <br/>
+                    <noscript>
+                        The timer won't work while javascript is disabled.<br/>
+                    </noscript>
                     <span id="lastTrackedWrapper">Last tracked <span id="lastTrackedType">spawn</span> was <span id="lastTrackedTime"></span></span>
                 </div>
 
