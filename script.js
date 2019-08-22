@@ -227,9 +227,9 @@ $(document).ready(function () {
             timerId = setInterval(updateTimer, 1000);// tick every second
         });
 
-        $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/activeUsers").done(function (data) {
-            $("#activeUserCount").text(data.activeUsers);
-        })
+        // $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/activeUsers").done(function (data) {
+        //     $("#activeUserCount").text(data.activeUsers);
+        // })
     }
 
     refreshEstimate();
