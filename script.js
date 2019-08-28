@@ -59,6 +59,9 @@ $(document).ready(function () {
     let ipv4 = "";
     let ipv6 = "";
 
+    let onePushNotificationsGranted = false;
+    let onePushNotificationsEnabled = false;
+
     function updateTimer() {
         now = Date.now();
 
@@ -361,23 +364,35 @@ $(document).ready(function () {
         }
     });
 
-    OneSignal.push(["getNotificationPermission", function(permission) {
+    OneSignal.push(["getNotificationPermission", function (permission) {
         console.log("OnePush Site Notification Permission:", permission);
-        $("#pushNotificationSwitch").prop("checked", localStorage.getItem("pushNotifications") === "true" && permission === "granted");
+        onePushNotificationsGranted = permission === "granted";
     }]);
-    $("#pushNotificationSwitch").change(function () {
-        let checked = $(this).is(":checked");
-        if (checked) {
-            OneSignal.push(function() {
-                OneSignal.showNativePrompt();
-            });
-            Notification.requestPermission().then(function (result) {
-                console.log(result);
-                localStorage.setItem("pushNotifications", "true");
-            });
-        } else {
-            localStorage.setItem("pushNotifications", "false");
-        }
+    // $("#pushNotificationSwitch").change(function () {
+    //     let checked = $(this).is(":checked");
+    //     if (checked) {
+    //         OneSignal.push(function () {
+    //             OneSignal.showNativePrompt();
+    //             localStorage.setItem("pushNotifications", "true");
+    //         });
+    //     } else {
+    //         localStorage.setItem("pushNotifications", "false");
+    //     }
+    // });
+    OneSignal.push(function () {
+        // Occurs when the user's subscription changes to a new value.
+        OneSignal.on('subscriptionChange', function (isSubscribed) {
+            console.log("The user's subscription state is now:", isSubscribed);
+            onePushNotificationsEnabled = isSubscribed;
+        });
+        OneSignal.isPushNotificationsEnabled(function (isEnabled) {
+            if (isEnabled)
+                console.log("Push notifications are enabled!");
+            else
+                console.log("Push notifications are not enabled yet.");
+
+            onePushNotificationsEnabled = isEnabled;
+        });
     });
 
     $("#mcUsername").val(localStorage.getItem("mcUsername") || "");
@@ -476,7 +491,8 @@ $(document).ready(function () {
             return;
         }
 
-        if (localStorage.getItem("pushNotifications") === "true") {
+
+        if (onePushNotificationsEnabled && onePushNotificationsGranted) {
             console.log("OneSignal push notifications are enabled, not sending another one.");
             return;
         }

@@ -192,16 +192,19 @@
                                     </label>
                                 </div>
                             </div>
+<!--                            <div class="input-field col s12 m6">-->
+<!--                                <span>Offline Push Notifications</span>-->
+<!--                                <div class="switch">-->
+<!--                                    <label>-->
+<!--                                        Off-->
+<!--                                        <input type="checkbox" id="pushNotificationSwitch">-->
+<!--                                        <span class="lever"></span>-->
+<!--                                        On-->
+<!--                                    </label>-->
+<!--                                </div>-->
+<!--                            </div>-->
                             <div class="input-field col s12 m6">
-                                <span>Offline Push Notifications</span>
-                                <div class="switch">
-                                    <label>
-                                        Off
-                                        <input type="checkbox" id="pushNotificationSwitch">
-                                        <span class="lever"></span>
-                                        On
-                                    </label>
-                                </div>
+                                <span>Clicking the red bell in the bottom-right will send you a notification even if your browser is closed!</span>
                             </div>
                             <div class="input-field col s12 m6">
                                 <input placeholder="username" id="mcUsername" type="text" class="validate" minlength="3" maxlength="16">
