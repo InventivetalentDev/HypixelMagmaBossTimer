@@ -77,6 +77,18 @@
                 enable_page_level_ads: true
             });
         </script>
+        <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+        <script>
+            var OneSignal = window.OneSignal || [];
+            OneSignal.push(function() {
+                OneSignal.init({
+                    appId: "1a3f44bd-adb0-44ff-b414-de114a65759e",
+                    notifyButton: {
+                        enable: true,
+                    },
+                });
+            });
+        </script>
     </head>
     <body>
         <div id="bgImage"></div>
