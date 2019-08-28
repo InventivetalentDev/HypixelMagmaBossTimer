@@ -400,6 +400,12 @@ $(document).ready(function () {
         localStorage.setItem("mcUsername", $(this).val());
     });
 
+    Highcharts.setOptions({
+        time: {
+            useUTC: false
+        }
+    });
+
     function makeTimelineChart() {
         $.ajax("https://hypixel-api.inventivetalent.org/api/skyblock/bosstimer/magma/historyChart?hours=" + historyHours).done(function (data) {
             Highcharts.chart('timelineChart', {
