@@ -334,7 +334,7 @@ $(document).ready(function () {
     });
 
 
-    $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true");
+    $("#tenMinNotificationSwitch").prop("checked", localStorage.getItem("tenMinNotification") === "true" && Notification.permission === "granted");
     $("#tenMinNotificationSwitch").change(function () {
         let checked = $(this).is(":checked");
         if (checked) {
@@ -348,7 +348,7 @@ $(document).ready(function () {
     });
 
 
-    $("#fiveMinNotificationSwitch").prop("checked", localStorage.getItem("fiveMinNotification") === "true");
+    $("#fiveMinNotificationSwitch").prop("checked", localStorage.getItem("fiveMinNotification") === "true" && Notification.permission === "granted");
     $("#fiveMinNotificationSwitch").change(function () {
         let checked = $(this).is(":checked");
         if (checked) {
@@ -358,6 +358,25 @@ $(document).ready(function () {
             });
         } else {
             localStorage.setItem("fiveMinNotification", "false");
+        }
+    });
+
+    OneSignal.push(["getNotificationPermission", function(permission) {
+        console.log("OnePush Site Notification Permission:", permission);
+        $("#pushNotificationSwitch").prop("checked", localStorage.getItem("pushNotifications") === "true" && permission === "granted");
+    }]);
+    $("#pushNotificationSwitch").change(function () {
+        let checked = $(this).is(":checked");
+        if (checked) {
+            OneSignal.push(function() {
+                OneSignal.showNativePrompt();
+            });
+            Notification.requestPermission().then(function (result) {
+                console.log(result);
+                localStorage.setItem("pushNotifications", "true");
+            });
+        } else {
+            localStorage.setItem("pushNotifications", "false");
         }
     });
 
@@ -454,6 +473,11 @@ $(document).ready(function () {
         }
         if (Notification.permission !== "granted") {
             console.warn("Notifications not granted");
+            return;
+        }
+
+        if (localStorage.getItem("pushNotifications") === "true") {
+            console.log("OneSignal push notifications are enabled, not sending another one.");
             return;
         }
 
