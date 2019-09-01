@@ -12,6 +12,7 @@
             html, body, .the-wrapper {
                 height: 100%;
                 overflow: hidden;
+                overflow-y: auto;
             }
 
             body, .modal-content {
@@ -23,6 +24,8 @@
             }
 
             #bgImage {
+                position: fixed;
+                width: 100%;
                 height: 100%;
                 filter: blur(6px);
                 background-position: center;
@@ -38,6 +41,7 @@
                 transform: translate(-50%, -50%);
 
                 z-index: 2;
+                overflow-y: auto;
             }
 
             .btn {
