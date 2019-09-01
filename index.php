@@ -12,11 +12,13 @@
             html, body, .the-wrapper {
                 height: 100%;
                 overflow: hidden;
-                overflow-y: auto;
             }
 
             body, .modal-content {
                 background-color: rgb(55, 40, 47);
+            }
+            body{
+                overflow-y: auto;
             }
 
             body, input {
@@ -150,6 +152,18 @@
 
                 <br/>
                  <a href="#eventInfoModal" class="modal-trigger">What do the waves look like?</a>
+                <br/>
+                <br/>
+
+                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                <!-- MagmaTimer bottom banner -->
+                <ins class="adsbygoogle"
+                     style="display:inline-block;width:700px;height:100px"
+                     data-ad-client="ca-pub-2604356629473365"
+                     data-ad-slot="4334304019"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
             </div>
 
         </div>
