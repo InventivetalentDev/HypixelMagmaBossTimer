@@ -17,7 +17,7 @@
             body, .modal-content {
                 background-color: rgb(55, 40, 47);
             }
-            body{
+            html{
                 overflow-y: auto;
             }
 
