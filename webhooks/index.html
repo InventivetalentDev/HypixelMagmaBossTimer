@@ -16,6 +16,8 @@
                 Use this form to add a webhook to be called when the magma boss spawn is close (10 minutes prior).<br/>
                 This is mainly intended for Discord Webhooks, but you can also specify a custom URL which will be called with the estimate data in JSON format.<br/>
                 (Note that any webhook will always be called ~10mins before spawn)<br/>
+                <br/>
+                <a href="https://imgur.com/a/nPsdCfj" target="_blank">Avatar Image</a>
             </div>
             <br/>
             <div class="row">
@@ -33,7 +35,7 @@
 
                     <div class="row" id="buttonsWrapper" style="display:none;">
                         <button class="btn green" id="createWebhookBtn" disabled>
-                            Create Webhook
+                            Create New Webhook
                         </button>
                         <button class="btn red" id="deleteWebhookBtn" disabled>
                             Delete Existing Webhook
@@ -71,7 +73,6 @@
                         let captcha = grecaptcha.getResponse();
 
                         $(this).attr("disabled", true);
-                        $("#webhookUrl").val("");
                         grecaptcha.reset()
                         $.ajax({
                             method: "PUT",
@@ -82,9 +83,11 @@
                                 captcha: captcha
                             }
                         }).then(function (data) {
+                            $("#webhookUrl").val("");
                             console.log(data)
                             alert(data.msg);
                         }).catch(function (data) {
+                            $("#webhookUrl").val("");
                             console.warn(data);
                             alert(data.msg);
                         })
