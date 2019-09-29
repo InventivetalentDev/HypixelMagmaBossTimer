@@ -30,9 +30,6 @@ $(document).ready(function () {
         $(".track-btn").attr("disabled", false);
     });
 
-    let bgIndex = getRndInteger(1, 10);
-    $("#bgImage").css("background-image", "url(img/bg/" + bgIndex + ".jpg), url(img/bg/" + bgIndex + ".png)");
-
     const devMode = window.location.hash === "#DEV";
     if (devMode) {
         $("#d").text("DEV MODE ACTIVE");
@@ -97,7 +94,7 @@ $(document).ready(function () {
             $("#time").text("NOW");
             $("#timerText").text("The Magma Boss should spawn");
         }
-        $('head title', window.parent.document).text(formattedTimer + " | Hypixel Skyblock Magma Boss Timer");
+        $('head title', window.parent.document).text(formattedTimer + " | Magma Boss Timer // Hypixel Skyblock");
 
         // Start timeout before showing any buttons, since it looks like a lot of people like clicking buttons with shiny colors
         if (startCounter > 15) {

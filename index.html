@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Hypixel Skyblock Magma Boss Timer</title>
+        <title>Magma Boss Timer // Hypixel Skyblock</title>
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/fontawesome.min.css" integrity="sha256-AaQqnjfGDRZd/lUp0Dvy7URGOyRsh8g9JdWUkyYxNfI=" crossorigin="anonymous"/>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/brands.min.css" integrity="sha256-u8123o+sLy8uk0Du9H0Ub+KinAoHanzGsBqDkWHY1f8=" crossorigin="anonymous"/>
 
+        <link rel="stylesheet" href="../shared-css/bgimg.js"/>
         <style>
             html, body, .the-wrapper {
                 height: 100%;
@@ -24,16 +25,6 @@
 
             body, input {
                 color: #e9e9e9;
-            }
-
-            #bgImage {
-                position: fixed;
-                width: 100%;
-                height: 100%;
-                filter: blur(6px);
-                background-position: center;
-                background-repeat: no-repeat;
-                background-size: cover;
             }
 
             #content {
@@ -353,6 +344,11 @@
             }
         </script>
         <script src="https://cdn.jsdelivr.net/gh/InventivetalentDev/DonationPopup@master/DonationPopup.min.js"></script>
+
+        <script>
+            let bgImgCount = 10;
+        </script>
+        <script src="../shared-js/bgimg.js"></script>
 
         <script src="script.min.js"></script>
         <script>
