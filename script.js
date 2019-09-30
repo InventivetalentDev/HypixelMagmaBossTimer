@@ -90,11 +90,14 @@ $(document).ready(function () {
         if (duration > 0) {
             $("#time").text(formattedTimer);
             $("#timerText").text("The Magma Boss should spawn in about");
+
+            $('head title', window.parent.document).text(formattedTimer + " | Magma Boss Timer // Hypixel Skyblock");
         } else {
             $("#time").text("NOW");
             $("#timerText").text("The Magma Boss should spawn");
+
+            $('head title', window.parent.document).text("NOW | Magma Boss Timer // Hypixel Skyblock");
         }
-        $('head title', window.parent.document).text(formattedTimer + " | Magma Boss Timer // Hypixel Skyblock");
 
         // Start timeout before showing any buttons, since it looks like a lot of people like clicking buttons with shiny colors
         if (startCounter > 15) {
